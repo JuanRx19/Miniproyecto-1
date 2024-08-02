@@ -9,3 +9,7 @@ Pasos para inicializar el proyecto:
 4. Inicializar el backend con "python3 manage.py runserver".
 5. Inicializar el front con "npm run dev".
 6. Proyecto correctamente instalado.
+
+Proyecto:
+crud - Front-End
+myapp - Backe-End
