@@ -12,5 +12,5 @@ Pasos para inicializar el proyecto:
 
 Proyecto:
 
-crud - Front-End
-myapp - Backe-End
+- crud - Front-End
+- myapp - Backe-End
