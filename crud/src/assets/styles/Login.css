@@ -1,0 +1,23 @@
+.contenedor-login{
+  margin-top: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.contenedor-datos{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.boton-login{
+  margin-top: 25px;
+}
+
+.datos{
+  height: 30px;
+  width: 250px;
+}
