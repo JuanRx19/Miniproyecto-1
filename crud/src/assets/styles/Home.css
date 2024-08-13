@@ -24,4 +24,5 @@
 
 .contenedor-home button.active{
   background-color: #2C2F38;
+  border-color: #646cff;
 }
