@@ -6,7 +6,7 @@ function Inicio() {
     { nombre:"Juan Miguel Rojas", url: null },
     { nombre:"Rafael Hermida" , url: null },
     { nombre:"Miguel Sanchez", url: null },
-    { nombre:"Bairon Torres", url: "blob:https://web.whatsapp.com/ef120996-8cdf-4013-8900-d527f315cb59" }];
+    { nombre:"Bairon Torres", url: "https://http2.mlstatic.com/D_Q_NP_2X_941189-MLA52773387142_122022-AB.webp" }];
 
   return (
     <div className="contenedor-inicio">
