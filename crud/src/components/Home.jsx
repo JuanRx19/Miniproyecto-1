@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Inventario from "./Inventario";
 import RegistroVentas from "./RegistroVentas";
 import ReporteVentas from "./ReporteVentas";
+import Inicio from "./Inicio";
 
 function Home() {
   const [opcion, setOpcion] = useState(null);
@@ -10,7 +11,7 @@ function Home() {
 
   function Renderizado() {
     if (opcion == 0 || opcion == null) {
-      return <h1>Inicio</h1>;
+      return <Inicio />;
     } else if (opcion === 1) {
       return <RegistroVentas />;
     } else if (opcion === 2) {
@@ -19,12 +20,14 @@ function Home() {
       return <Inventario />;
     }
   }
+
   function RenderUsers(){
     return (
     <div className="contenedor-users">
       Sign Out
     </div>);
   }
+
   function User(){
     if(isVisible){
       return RenderUsers();
