@@ -2,13 +2,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   background-color: #333640;
-  width: 500px;
-  height: 250px;
+  width: 400px;
+  height: 320px;
   border-radius: 20px 0px 20px 0px;
 }
 
 .contenedor-card h2{
   margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.contenedor-card img{
+  width: 40%;
+  border-radius: 0px 20px 0px 20px;
 }
