@@ -7,9 +7,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 300px;
   background-color: #2C2F38;
+}
+
+.contenedor-logout{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .contenedor-home button{

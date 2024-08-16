@@ -25,13 +25,19 @@ function Login() {
     try{
       const userquery = users.find(use => use.Usuario === user);
       if(userquery.Contraseña === password){
-        console.log("Correcto")
+        console.log("Correcto", userquery)
         setLogin(true)
+        localStorage.setItem('userNombre', userquery.NombreEmpleado);
+        localStorage.setItem('userRole', userquery.TipoEmpleado);
         //navigate('/home');
       }else{
+        localStorage.setItem('userNombre', null);
+        localStorage.setItem('userRole', null);
         console.log("Incorrecto")
       }
     } catch (error){
+      localStorage.setItem('userNombre', null);
+      localStorage.setItem('userRole', null);
       console.error("Usuario no existente")
     }
     
