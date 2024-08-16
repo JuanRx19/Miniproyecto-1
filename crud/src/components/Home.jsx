@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Inventario from "./Inventario";
 import RegistroVentas from "./RegistroVentas";
 import ReporteVentas from "./ReporteVentas";
+import PanelAdministrativo from "./PanelAdministrativo";
 import Inicio from "./Inicio";
 import { useNavigate } from 'react-router-dom';
 
@@ -29,8 +30,10 @@ function Home() {
       return <RegistroVentas />;
     } else if (opcion === 2) {
       return <ReporteVentas />;
-    } else {
+    } else if(opcion === 3){
       return <Inventario />;
+    }else{
+      return <PanelAdministrativo />;
     }
   }
 
@@ -57,6 +60,12 @@ function Home() {
     }
   }
 
+  function GenerarPanel(){
+    if(userRole === 'true'){
+      return <li onClick={() => setOpcion(4)}><button className={`button ${opcion === 4 ? 'active' : ''}`}>Panel administrativo</button></li>
+    }
+  }
+
   return (
     <div className="contenedor-home">
       <nav className="navbar">
@@ -71,6 +80,7 @@ function Home() {
           <li onClick={() => setOpcion(1)}><button className={`button ${opcion === 1 ? 'active' : ''}`}>Registro de ventas</button></li>
           <li onClick={() => setOpcion(2)}><button className={`button ${opcion === 2 ? 'active' : ''}`}>Reporte de ventas</button></li>
           <li onClick={() => setOpcion(3)}><button className={`button ${opcion === 3 ? 'active' : ''}`}>Inventario</button></li>
+          {GenerarPanel()}
         </ul>
         <h3>{nombre}</h3>
       </nav>
