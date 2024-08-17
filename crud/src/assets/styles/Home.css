@@ -27,6 +27,7 @@
 
 .contenedor-home button:hover{
   background-color: #2C2F38;
+  transition: background-color 0.5s 0.2s;
 }
 
 .contenedor-home button.active{

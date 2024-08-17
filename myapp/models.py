@@ -15,7 +15,7 @@ class Banco(models.Model):
         db_table = 'banco'
 
 class Empleado(models.Model):
-    IdEmpleado = models.BigIntegerField(primary_key=True)
+    IdEmpleado = models.BigAutoField(primary_key=True)
     NombreEmpleado = models.CharField(max_length=30)
     TipoEmpleado = models.BooleanField()  # BIT en MySQL se traduce como BooleanField en Django
     Usuario = models.CharField(max_length=50)

@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import ItemListCreate, ItemRetrieveUpdateDestroy, home
 from .views import (
-    BancoListCreateView, EmpleadoListCreateView, ClienteListCreateView,
+    BancoListCreateView, EmpleadoListCreateView, EmpleadoRetrieveUpdateDestroy, ClienteListCreateView,
     ProveedorListCreateView, ProductoListCreateView, FacturaListCreateView, ProductoFacturaListCreateView
 )
 
@@ -11,7 +11,8 @@ urlpatterns = [
     path('items/<int:pk>/', ItemRetrieveUpdateDestroy.as_view(), name='item_retrieve_update_destroy'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('banco/', BancoListCreateView.as_view(), name='banco-list-create'),
-    path('empleado/', EmpleadoListCreateView.as_view(), name='empleado-list-create'),
+    path('empleado/', EmpleadoListCreateView.as_view(), name='empleado_retrieve_update_destroy'),
+    path('empleado/<int:pk>/', EmpleadoRetrieveUpdateDestroy.as_view(), name='empleado-detail'),
     path('cliente/', ClienteListCreateView.as_view(), name='cliente-list-create'),
     path('proveedor/', ProveedorListCreateView.as_view(), name='proveedor-list-create'),
     path('producto/', ProductoListCreateView.as_view(), name='producto-list-create'),
