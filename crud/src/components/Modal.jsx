@@ -1,6 +1,5 @@
 import '../assets/styles/Modal.css';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Modal = ({ isOpen, onClose, isEdit, data, fetchEmpleados }) => {
@@ -9,7 +8,6 @@ const Modal = ({ isOpen, onClose, isEdit, data, fetchEmpleados }) => {
   const [usuario, setUsuario] = useState();
   const [contraseña, setContraseña] = useState();
   const [tipo, setTipo] = useState(false);
-  const navigate = useNavigate();
 
   const manejarFormulario = async () => {
     event.preventDefault();
