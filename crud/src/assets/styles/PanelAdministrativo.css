@@ -1,3 +1,12 @@
+@keyframes backgroundFadeIn {
+  from {
+    background-color: transparent;
+  }
+  to {
+    background-color: #2C2F38;
+  }
+}
+
 .contenedor-administrativo {
   display: flex;
   flex-direction: column;
@@ -30,6 +39,7 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
+  animation: backgroundFadeIn 3s ease 0.01s forwards;
 }
 
 .grid-item:nth-child(3n) {

@@ -1,0 +1,27 @@
+.contenedor-card-product{
+  height: 290px;
+  width: 200px;
+  border-radius: 10px;
+  background-color: #333640;
+}
+
+.contenedor-card-informacion{
+  height: 250px;
+  border-radius: 10px;
+  text-align: center;
+}
+.contenedor-card-product .contenedor-card-informacion .imagen-producto{
+  max-height: 70%;
+  max-width: 90%;
+  border-radius: 30px;
+}
+
+.informacion-card{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+}

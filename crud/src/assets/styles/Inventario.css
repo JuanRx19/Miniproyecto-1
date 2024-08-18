@@ -1,0 +1,70 @@
+.contenedor-inventario{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.contenedor-informacion{
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+}
+
+.informacion-tienda{
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-left: 30px;
+}
+
+.contenedor-funcionalidades{
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin-right: 30px;
+}
+
+.contenedor-funcionalidades button{
+  width: 200px;
+}
+.contenedor-funcionalidades .boton-proveedor{
+  background-color: #007bff;
+}
+
+.contenedor-funcionalidades .boton-producto{
+  background-color: #28a745;
+}
+
+.contenedor-productos{
+  height: 100%;
+  max-height: calc(100%-100px);
+  width: calc(100%-300px);
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  overflow-y: auto;
+}
+
+.contenedor-productos::-webkit-scrollbar {
+  width: 12px; /* Ancho del scrollbar */
+}
+
+/* Estilo para el "thumb" del scrollbar */
+.contenedor-productos::-webkit-scrollbar-thumb {
+  background-color: #2C2F38; /* Color del thumb */
+  border-radius: 6px; /* Bordes redondeados */
+}
+
+/* Estilo para el "track" del scrollbar */
+.contenedor-productos::-webkit-scrollbar-track {
+  background-color: #242424; /* Color de fondo del track */
+  border-radius: 6px; /* Bordes redondeados */
+}

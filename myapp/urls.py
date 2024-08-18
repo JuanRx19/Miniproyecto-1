@@ -2,7 +2,7 @@ from django.urls import path, include
 from .views import ItemListCreate, ItemRetrieveUpdateDestroy, home
 from .views import (
     BancoListCreateView, EmpleadoListCreateView, EmpleadoRetrieveUpdateDestroy, ClienteListCreateView,
-    ProveedorListCreateView, ProductoListCreateView, FacturaListCreateView, ProductoFacturaListCreateView
+    ProveedorListCreateView, ProveedorRetrieveUpdateDestroy, ProductoListCreateView, FacturaListCreateView, ProductoFacturaListCreateView
 )
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     path('empleado/<int:pk>/', EmpleadoRetrieveUpdateDestroy.as_view(), name='empleado-detail'),
     path('cliente/', ClienteListCreateView.as_view(), name='cliente-list-create'),
     path('proveedor/', ProveedorListCreateView.as_view(), name='proveedor-list-create'),
+    path('proveedor/<int:pk>/', ProveedorRetrieveUpdateDestroy.as_view(), name='proveedor-detail'),
     path('producto/', ProductoListCreateView.as_view(), name='producto-list-create'),
     path('factura/', FacturaListCreateView.as_view(), name='factura-list-create'),
     path('producto-factura/', ProductoFacturaListCreateView.as_view(), name='producto-factura-list-create'),

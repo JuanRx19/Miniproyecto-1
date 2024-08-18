@@ -16,7 +16,7 @@ function Home() {
   const userRole = localStorage.getItem('userRole'); // Asegúrate de que 'userRole' esté guardado como 'Administrador' o 'Empleado'
 
   useEffect(() => {
-    if (!userRole || userRole === 'null') {
+    if (userRole === 'null') {
       navigate('/');
     }else{
       setNombre(userNombre)

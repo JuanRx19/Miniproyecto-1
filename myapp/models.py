@@ -31,19 +31,20 @@ class Cliente(models.Model):
         db_table = 'cliente'
 
 class Proveedor(models.Model):
-    IdProveedor = models.BigIntegerField(primary_key=True)
+    IdProveedor = models.BigAutoField(primary_key=True)
     NombreProveedor = models.CharField(max_length=50)
     DireccionProveedor = models.CharField(max_length=50)
     class Meta:
         db_table = 'proveedor'
 
 class Producto(models.Model):
-    IdProducto = models.BigIntegerField(primary_key=True)
+    IdProducto = models.BigAutoField(primary_key=True)
     NombreProducto = models.CharField(max_length=50)
     IdProveedor = models.ForeignKey('Proveedor', on_delete=models.CASCADE, db_column='IdProveedor')
     Cantidad = models.IntegerField()
     ValorUnidad = models.IntegerField()
-    facturas = models.ManyToManyField('Factura', through='ProductoFactura')
+    UrlImagen = models.CharField(max_length=2048)
+    #facturas = models.ManyToManyField('Factura', through='ProductoFactura')
     class Meta:
         db_table = 'producto'
 
@@ -54,7 +55,7 @@ class Factura(models.Model):
     Fecha = models.DateField()
     MedioPago = models.CharField(max_length=50, choices=[('Efectivo', 'Efectivo'), ('Tarjeta', 'Tarjeta')])
     IdBanco = models.ForeignKey(Banco, on_delete=models.CASCADE, db_column='IdBanco')
-    productos = models.ManyToManyField('Producto', through='ProductoFactura')
+    #productos = models.ManyToManyField('Producto', through='ProductoFactura')
     class Meta:
         db_table = 'factura'
 
