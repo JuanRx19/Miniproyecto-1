@@ -7,6 +7,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 function PanelAdministrativo() {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [empleados, setEmpleados] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModal, setEditModal] = useState();
@@ -34,7 +35,7 @@ function PanelAdministrativo() {
   
   const fetchEmpleados = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/empleado/');
+      const response = await axios.get(`${apiUrl}/api/empleado/`);
       setEmpleados(response.data);
     } catch (error) {
       console.error('Error fetching employees:', error);
@@ -43,7 +44,7 @@ function PanelAdministrativo() {
   
   const eliminarEmpleado = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/empleado/${id}/`);
+      await axios.delete(`${apiUrl}/api/empleado/${id}/`);
       alert("Empleado eliminado correctamente");
       // Actualizar el grid después de eliminar
       setEmpleados((prevEmpleados) => prevEmpleados.filter(empleado => empleado.IdEmpleado !== id));

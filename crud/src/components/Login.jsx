@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState("");
@@ -24,7 +25,7 @@ function Login() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/empleado/');
+      const response = await axios.get(`${apiUrl}/api/empleado/`);
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching items:', error);

@@ -5,7 +5,7 @@ import CardProducto from "./CardProducto";
 import ModalPP from "./ModalPP";
 
 function Inventario() {
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [proveedores, setProveedores] = useState([]);
   const [productos, setProductos] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -38,7 +38,7 @@ function Inventario() {
 
   const fetchProveedores = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/proveedor/');
+      const response = await axios.get(`${apiUrl}/api/proveedor/`);
       setProveedores(response.data);
     } catch (error) {
       console.error('Error fetching proveedores:', error);
@@ -47,7 +47,7 @@ function Inventario() {
 
   const fetchProductos = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/producto/');
+      const response = await axios.get(`${apiUrl}/api/producto/`);
       setProductos(response.data);
     } catch (error) {
       console.error('Error fetching productos:', error);

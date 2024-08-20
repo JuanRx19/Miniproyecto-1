@@ -3,6 +3,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const ModalPP = ({ isOpen, onClose, isPP, dataProveedores, fetchProductos }) => {
+  const apiUrl = process.env.REACT_APP_API_URL;
   if (!isOpen) return null; // No renderiza el modal si no está abierto
   const [nombre, setNombre] = useState();
   const [proveedor, setProveedor] = useState();
@@ -16,7 +17,7 @@ const ModalPP = ({ isOpen, onClose, isPP, dataProveedores, fetchProductos }) => 
     e.preventDefault();
     try{
       if(isPP){
-        await axios.post('http://localhost:8000/api/producto/', {
+        await axios.post(`${apiUrl}/api/producto/`, {
           NombreProducto: nombre,
           IdProveedor: idProveedor,
           Cantidad: cantidad,
@@ -25,7 +26,7 @@ const ModalPP = ({ isOpen, onClose, isPP, dataProveedores, fetchProductos }) => 
         });
         alert('Producto agregado con exito');
       }else{
-        await axios.post('http://localhost:8000/api/proveedor/', {
+        await axios.post(`${apiUrl}/api/proveedor/`, {
           NombreProveedor: proveedor,
           DireccionProveedor: direccion
         });

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ItemList = () => {
+  const apiUrl = process.env.REACT_APP_API_URL;
   const [items, setItems] = useState([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -25,7 +26,7 @@ const ItemList = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/items/');
+      const response = await axios.get(`${apiUrl}/api/items/`);
       setConnect(true)
       setItems(response.data);
     } catch (error) {
@@ -35,7 +36,7 @@ const ItemList = () => {
 
   const handleAddItem = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/items/', { name, description }, {
+      const response = await axios.post(`${apiUrl}/api/items/`, { name, description }, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -50,7 +51,7 @@ const ItemList = () => {
 
   const handleUpdateItem = async () => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/items/${editId}/`, { name, description }, {
+      const response = await axios.put(`${apiUrl}/api/items/${editId}/`, { name, description }, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -67,7 +68,7 @@ const ItemList = () => {
 
   const handleDeleteItem = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/items/${id}/`);
+      await axios.delete(`${apiUrl}/api/items/${id}/`);
       setItems(items.filter(item => item.id !== id));
     } catch (error) {
       console.error('Error deleting item:', error);

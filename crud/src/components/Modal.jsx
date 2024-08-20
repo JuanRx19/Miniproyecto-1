@@ -3,6 +3,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const Modal = ({ isOpen, onClose, isEdit, data, fetchEmpleados }) => {
+  const apiUrl = process.env.REACT_APP_API_URL;
   if (!isOpen) return null; // No renderiza el modal si no está abierto
   const [nombre, setNombre] = useState();
   const [usuario, setUsuario] = useState();
@@ -13,7 +14,7 @@ const Modal = ({ isOpen, onClose, isEdit, data, fetchEmpleados }) => {
     event.preventDefault();
     try{
       if(isEdit){
-        await axios.post('http://localhost:8000/api/empleado/', {
+        await axios.post(`${apiUrl}/api/empleado/`, {
           NombreEmpleado: nombre,
           TipoEmpleado: tipo,
           Usuario: usuario,
@@ -21,7 +22,7 @@ const Modal = ({ isOpen, onClose, isEdit, data, fetchEmpleados }) => {
         });
         alert('Empleado agregado con éxito');
       }else{
-        await axios.put(`http://localhost:8000/api/empleado/${data.IdEmpleado}/`, {
+        await axios.put(`${apiUrl}/api/empleado/${data.IdEmpleado}/`, {
           NombreEmpleado: data.NombreEmpleado,
           TipoEmpleado: tipo,
           Usuario: usuario,
