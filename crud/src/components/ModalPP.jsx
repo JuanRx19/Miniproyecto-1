@@ -3,7 +3,7 @@ import { useState } from 'react';
 import axios from 'axios';
 
 const ModalPP = ({ isOpen, onClose, isPP, dataProveedores, fetchProductos }) => {
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
   if (!isOpen) return null; // No renderiza el modal si no está abierto
   const [nombre, setNombre] = useState();
   const [proveedor, setProveedor] = useState();

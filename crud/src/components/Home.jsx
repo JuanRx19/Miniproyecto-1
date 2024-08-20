@@ -12,11 +12,11 @@ function Home() {
   const [opcion, setOpcion] = useState(null);
   const [isVisible, setVisible] = useState(false);
   const [nombre, setNombre] = useState(false);
-  const userNombre = localStorage.getItem('userNombre');
-  const userRole = localStorage.getItem('userRole'); // Asegúrate de que 'userRole' esté guardado como 'Administrador' o 'Empleado'
+  const userNombre = sessionStorage.getItem('userNombre');
+  const userRole = sessionStorage.getItem('userRole'); // Asegúrate de que 'userRole' esté guardado como 'Administrador' o 'Empleado'
 
   useEffect(() => {
-    if (userRole === 'null') {
+    if (!userRole || userRole === 'null') {
       navigate('/');
     }else{
       setNombre(userNombre)
@@ -42,8 +42,8 @@ function Home() {
       <button 
         onClick={() => {
           setVisible(!isVisible); 
-          localStorage.setItem('userNombre', null); 
-          localStorage.setItem('userRole', null); 
+          sessionStorage.setItem('userNombre', null); 
+          sessionStorage.setItem('userRole', null); 
           navigate('/'); // Redirigir al login
         }}
       >

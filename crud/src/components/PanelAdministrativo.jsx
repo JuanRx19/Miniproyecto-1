@@ -7,7 +7,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 function PanelAdministrativo() {
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [empleados, setEmpleados] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModal, setEditModal] = useState();

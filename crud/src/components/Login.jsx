@@ -5,20 +5,20 @@ import { Navigate } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggin, setLogin] = useState(false);
-  const userRole = localStorage.getItem('userRole');
+  const userRole = sessionStorage.getItem('userRole');
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
   useEffect(() => {
-    if (userRole !== 'null') {
+    if (userRole) {
       navigate('/Home');
     }
   }, [userRole, navigate]);
@@ -38,19 +38,19 @@ function Login() {
       if(userquery.Contraseña === password){
         console.log("Correcto", userquery)
         setLogin(true)
-        localStorage.setItem('userNombre', userquery.NombreEmpleado);
-        localStorage.setItem('userRole', userquery.TipoEmpleado);
+        sessionStorage.setItem('userNombre', userquery.NombreEmpleado);
+        sessionStorage.setItem('userRole', userquery.TipoEmpleado);
         alert("Inicio de sesión correcto")
         //navigate('/home');
       }else{
-        localStorage.setItem('userNombre', null);
-        localStorage.setItem('userRole', null);
+        sessionStorage.setItem('userNombre', null);
+        sessionStorage.setItem('userRole', null);
         alert("Usuario y/o contraseña incorrectos")
         console.log("Incorrecto")
       }
     } catch (error){
-      localStorage.setItem('userNombre', null);
-      localStorage.setItem('userRole', null);
+      sessionStorage.setItem('userNombre', null);
+      sessionStorage.setItem('userRole', null);
       console.error("Usuario no existente")
       alert("Usuario y/o contraseña incorrectos")
     }
