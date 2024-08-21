@@ -1,6 +1,29 @@
 from django.db import models
 
 # Create your models here.
+
+
+"REGISTRO DE VENTAS"
+
+from django.contrib.auth.models import User
+
+class Venta(models.Model):
+    producto = models.ForeignKey('Producto', on_delete=models.CASCADE)
+    cantidad = models.IntegerField()
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    total_venta = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_venta = models.DateTimeField(auto_now_add=True)
+    vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        self.total_venta = self.cantidad * self.precio_unitario
+        super(Venta, self).save(*args, **kwargs)
+
+"FINAL"
+
+
+
+
 class Item(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()

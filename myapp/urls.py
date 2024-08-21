@@ -4,6 +4,12 @@ from .views import (
     BancoListCreateView, EmpleadoListCreateView, EmpleadoRetrieveUpdateDestroy, ClienteListCreateView,
     ProveedorListCreateView, ProveedorRetrieveUpdateDestroy, ProductoListCreateView, FacturaListCreateView, ProductoFacturaListCreateView
 )
+# Registro de Ventas
+from rest_framework.routers import DefaultRouter
+from .views import VentaViewSet
+
+router = DefaultRouter()
+router.register(r'ventas', VentaViewSet)
 
 urlpatterns = [
     path('', home, name='home'),  # Ruta raíz que muestra un mensaje de bienvenida
@@ -19,4 +25,7 @@ urlpatterns = [
     path('producto/', ProductoListCreateView.as_view(), name='producto-list-create'),
     path('factura/', FacturaListCreateView.as_view(), name='factura-list-create'),
     path('producto-factura/', ProductoFacturaListCreateView.as_view(), name='producto-factura-list-create'),
+    # Agregar la ruta para la lista de productos
+    path('api/productos/', ProductoListCreateView.as_view(), name='producto-list-create'),
+    path('api/', include(router.urls)),
 ]

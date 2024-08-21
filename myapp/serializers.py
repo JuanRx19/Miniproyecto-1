@@ -2,6 +2,21 @@ from rest_framework import serializers
 from .models import Item
 from .models import Banco, Empleado, Cliente, Proveedor, Producto, Factura, ProductoFactura
 
+
+
+"REGISTRO DE VENTAS"
+from .models import Venta
+
+class VentaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Venta
+        fields = '__all__'
+
+"FINAL"
+
+
+
+
 class BancoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banco
