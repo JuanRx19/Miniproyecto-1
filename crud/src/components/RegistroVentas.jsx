@@ -14,7 +14,7 @@ function RegistroVentas() {
     const [idBanco, setIdBanco] = useState('');
     const [productos, setProductos] = useState([]);
     const [empleados, setEmpleados] = useState([]);
-    const [mensajeExito, setMensajeExito] = useState(''); // Estado para el mensaje de éxito
+    const [mensajeExito, setMensajeExito] = useState('');
 
     // Definir los bancos directamente en el componente
     const bancos = [
@@ -24,6 +24,7 @@ function RegistroVentas() {
         { IdBanco: 4, NombreBanco: 'Otro' }
     ];
 
+    // Obtener la fecha actual
     const fechaActual = new Date().toISOString().slice(0, 10);
 
     useEffect(() => {
@@ -54,12 +55,10 @@ function RegistroVentas() {
         }
     };
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        alert("Generado con exito")
-            
+        alert("Generado con éxito");
+
         const venta = {
             IdProducto: producto,
             Cantidad: cantidad,
@@ -75,8 +74,6 @@ function RegistroVentas() {
             const response = await axios.post(`${apiUrl}/api/ventas/`, venta);
             console.log('Venta registrada:', response.data);
             
-            // Mostrar mensaje de éxito
-            
             // Restablecer el formulario después de la venta
             setProducto('');
             setCantidad('');
@@ -85,17 +82,21 @@ function RegistroVentas() {
             setEmpleado('');
             setMedioPago('');
             setIdBanco('');
-    
         } catch (error) {
             console.error('Error registrando la venta:', error);
         }
     };
 
+    // Calcular el total (cantidad * precio unitario)
+    const total = cantidad && precioUnitario ? (cantidad * precioUnitario) : 0;
 
     return (
         <div className="registro-ventas-container">
             <h2>Registrar Venta</h2>
-            {mensajeExito && <p className="mensaje-exito">{mensajeExito}</p>} {/* Mostrar mensaje de éxito */}
+            
+            {/* Mostrar la fecha actual */}
+            <p>Fecha Actual: {fechaActual}</p>
+            
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Producto:</label>
@@ -186,6 +187,10 @@ function RegistroVentas() {
                         </select>
                     </div>
                 )}
+
+                {/* Mostrar el total calculado */}
+                <p>Total: {total}</p>
+                
                 <button type="submit" className="submit-button">Registrar Venta</button>
             </form>
         </div>
@@ -193,4 +198,3 @@ function RegistroVentas() {
 }
 
 export default RegistroVentas;
-
