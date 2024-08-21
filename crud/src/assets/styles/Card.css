@@ -3,8 +3,8 @@
   flex-direction: column;
   align-items: center;
   background-color: #333640;
-  width: 400px;
-  height: 320px;
+  width: 35%;
+  height: 48%;
   border-radius: 20px 0px 20px 0px;
 }
 
@@ -14,6 +14,6 @@
 }
 
 .contenedor-card img{
-  width: 40%;
+  width: 30%;
   border-radius: 0px 20px 0px 20px;
 }
