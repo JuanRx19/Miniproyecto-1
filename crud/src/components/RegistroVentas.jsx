@@ -8,11 +8,12 @@ function RegistroVentas() {
     const [cantidad, setCantidad] = useState('');
     const [precioUnitario, setPrecioUnitario] = useState('');
     const [productos, setProductos] = useState([]);
-    const [cliente, setCliente] = useState(''); // Selección del cliente
-    const [medioPago, setMedioPago] = useState('Efectivo'); // Selección del medio de pago
-    const idVendedor = 1; // Supongamos que tienes el id del vendedor autenticado
-    const idBanco = 1; // Si es necesario, selecciona el banco
-
+    const [cliente, setCliente] = useState('');
+    const [medioPago, setMedioPago] = useState('Efectivo');
+    const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]); // Fecha actual por defecto
+    const [nombreEmpleado, setNombreEmpleado] = useState(''); // Suponemos que el nombre del empleado está en algún estado
+    const idVendedor = 1; // ID del vendedor (asumido que se conoce)
+    
     useEffect(() => {
         axios.get(`${apiUrl}/api/producto/`)
             .then(response => {
@@ -41,9 +42,9 @@ function RegistroVentas() {
             const factura = {
                 idCliente: cliente,
                 idVendedor,
-                fecha: new Date().toISOString(),
+                fecha,
                 medioPago,
-                idBanco: medioPago === 'Transferencia' ? idBanco : null
+                idBanco: medioPago === 'Transferencia' ? 1 : null // Se guarda como Transferencia
             };
 
             const responseFactura = await axios.post(`${apiUrl}/api/facturas/`, factura);
@@ -109,6 +110,24 @@ function RegistroVentas() {
                     />
                 </div>
                 <div className="form-group">
+                    <label>Nombre del Empleado:</label>
+                    <input
+                        type="text"
+                        value={nombreEmpleado}
+                        onChange={(e) => setNombreEmpleado(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Fecha:</label>
+                    <input
+                        type="date"
+                        value={fecha}
+                        onChange={(e) => setFecha(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-group">
                     <label>Medio de Pago:</label>
                     <select
                         value={medioPago}
@@ -120,17 +139,6 @@ function RegistroVentas() {
                         <option value="Transferencia">Transferencia</option>
                     </select>
                 </div>
-                {medioPago === 'Transferencia' && (
-                    <div className="form-group">
-                        <label>Banco:</label>
-                        <input
-                            type="text"
-                            value={idBanco}
-                            onChange={(e) => setIdBanco(e.target.value)}
-                            required
-                        />
-                    </div>
-                )}
                 <button type="submit" className="submit-button">Registrar Venta</button>
             </form>
         </div>
@@ -138,3 +146,4 @@ function RegistroVentas() {
 }
 
 export default RegistroVentas;
+
