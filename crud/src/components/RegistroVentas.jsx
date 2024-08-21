@@ -7,9 +7,12 @@ function RegistroVentas() {
     const [producto, setProducto] = useState('');
     const [cantidad, setCantidad] = useState('');
     const [precioUnitario, setPrecioUnitario] = useState('');
-    const [productos, setProductos] = useState([]);  // Estado para almacenar los productos
+    const [productos, setProductos] = useState([]);
+    const [cliente, setCliente] = useState(''); // Selección del cliente
+    const [medioPago, setMedioPago] = useState('Efectivo'); // Selección del medio de pago
+    const idVendedor = 1; // Supongamos que tienes el id del vendedor autenticado
+    const idBanco = 1; // Si es necesario, selecciona el banco
 
-    // Obtener la lista de productos desde el backend al cargar el componente
     useEffect(() => {
         axios.get(`${apiUrl}/api/producto/`)
             .then(response => {
@@ -20,17 +23,41 @@ function RegistroVentas() {
             });
     }, []);
 
+    const handleProductoChange = (e) => {
+        const productoSeleccionado = productos.find(prod => prod.IdProducto === parseInt(e.target.value));
+        setProducto(e.target.value);
+        if (productoSeleccionado) {
+            setPrecioUnitario(productoSeleccionado.ValorUnidad);
+        } else {
+            setPrecioUnitario('');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const venta = {
-            producto,  // ID del producto seleccionado
-            cantidad,
-            precio_unitario: precioUnitario,
-        };
 
         try {
-            const response = await axios.post('/api/ventas/', venta);
-            console.log('Venta registrada:', response.data);
+            // Primero, crear la factura
+            const factura = {
+                idCliente: cliente,
+                idVendedor,
+                fecha: new Date().toISOString(),
+                medioPago,
+                idBanco: medioPago === 'Transferencia' ? idBanco : null
+            };
+
+            const responseFactura = await axios.post(`${apiUrl}/api/facturas/`, factura);
+            const codigoFactura = responseFactura.data.CodigoFactura; // Obtener el CodigoFactura generado
+
+            // Luego, crear la entrada en ProductoFactura
+            const productoFactura = {
+                idProducto: producto,
+                idFactura: codigoFactura,
+                cantidad
+            };
+
+            await axios.post(`${apiUrl}/api/productofactura/`, productoFactura);
+            console.log('Venta registrada correctamente');
         } catch (error) {
             console.error('Error registrando la venta:', error);
         }
@@ -44,7 +71,7 @@ function RegistroVentas() {
                     <label>Producto:</label>
                     <select
                         value={producto}
-                        onChange={(e) => setProducto(e.target.value)}
+                        onChange={handleProductoChange}
                         required
                     >
                         <option value="">Selecciona un producto</option>
@@ -69,10 +96,41 @@ function RegistroVentas() {
                     <input
                         type="number"
                         value={precioUnitario}
-                        onChange={(e) => setPrecioUnitario(e.target.value)}
+                        readOnly
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Cliente:</label>
+                    <input
+                        type="text"
+                        value={cliente}
+                        onChange={(e) => setCliente(e.target.value)}
                         required
                     />
                 </div>
+                <div className="form-group">
+                    <label>Medio de Pago:</label>
+                    <select
+                        value={medioPago}
+                        onChange={(e) => setMedioPago(e.target.value)}
+                        required
+                    >
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                </div>
+                {medioPago === 'Transferencia' && (
+                    <div className="form-group">
+                        <label>Banco:</label>
+                        <input
+                            type="text"
+                            value={idBanco}
+                            onChange={(e) => setIdBanco(e.target.value)}
+                            required
+                        />
+                    </div>
+                )}
                 <button type="submit" className="submit-button">Registrar Venta</button>
             </form>
         </div>
@@ -80,4 +138,3 @@ function RegistroVentas() {
 }
 
 export default RegistroVentas;
-
