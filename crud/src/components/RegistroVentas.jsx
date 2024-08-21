@@ -4,16 +4,28 @@ import axios from 'axios';
 
 function RegistroVentas() {
     const apiUrl = import.meta.env.VITE_API_URL;
+
     const [producto, setProducto] = useState('');
     const [cantidad, setCantidad] = useState('');
     const [precioUnitario, setPrecioUnitario] = useState('');
-    const [productos, setProductos] = useState([]);
     const [cliente, setCliente] = useState('');
-    const [medioPago, setMedioPago] = useState('Efectivo');
-    const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0]); // Fecha actual por defecto
-    const [nombreEmpleado, setNombreEmpleado] = useState(''); // Suponemos que el nombre del empleado está en algún estado
-    const idVendedor = 1; // ID del vendedor (asumido que se conoce)
-    
+    const [empleado, setEmpleado] = useState('');
+    const [medioPago, setMedioPago] = useState('');
+    const [idBanco, setIdBanco] = useState('');
+    const [productos, setProductos] = useState([]);
+    const [empleados, setEmpleados] = useState([]);
+    const [mensajeExito, setMensajeExito] = useState(''); // Estado para el mensaje de éxito
+
+    // Definir los bancos directamente en el componente
+    const bancos = [
+        { IdBanco: 1, NombreBanco: 'Bancolombia' },
+        { IdBanco: 2, NombreBanco: 'Banco de Bogotá' },
+        { IdBanco: 3, NombreBanco: 'BBVA' },
+        { IdBanco: 4, NombreBanco: 'Otro' }
+    ];
+
+    const fechaActual = new Date().toISOString().slice(0, 10);
+
     useEffect(() => {
         axios.get(`${apiUrl}/api/producto/`)
             .then(response => {
@@ -21,6 +33,14 @@ function RegistroVentas() {
             })
             .catch(error => {
                 console.error('Error obteniendo los productos:', error);
+            });
+
+        axios.get(`${apiUrl}/api/empleado/`)
+            .then(response => {
+                setEmpleados(response.data);
+            })
+            .catch(error => {
+                console.error('Error obteniendo los empleados:', error);
             });
     }, []);
 
@@ -34,39 +54,48 @@ function RegistroVentas() {
         }
     };
 
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        alert("Generado con exito")
+            
+        const venta = {
+            IdProducto: producto,
+            Cantidad: cantidad,
+            PrecioUnitario: precioUnitario,
+            IdCliente: cliente,
+            IdEmpleado: empleado,
+            Fecha: fechaActual,
+            MedioPago: medioPago,
+            IdBanco: medioPago === 'Tarjeta' ? idBanco : null
+        };
 
         try {
-            // Primero, crear la factura
-            const factura = {
-                idCliente: cliente,
-                idVendedor,
-                fecha,
-                medioPago,
-                idBanco: medioPago === 'Transferencia' ? 1 : null // Se guarda como Transferencia
-            };
-
-            const responseFactura = await axios.post(`${apiUrl}/api/facturas/`, factura);
-            const codigoFactura = responseFactura.data.CodigoFactura; // Obtener el CodigoFactura generado
-
-            // Luego, crear la entrada en ProductoFactura
-            const productoFactura = {
-                idProducto: producto,
-                idFactura: codigoFactura,
-                cantidad
-            };
-
-            await axios.post(`${apiUrl}/api/productofactura/`, productoFactura);
-            console.log('Venta registrada correctamente');
+            const response = await axios.post(`${apiUrl}/api/ventas/`, venta);
+            console.log('Venta registrada:', response.data);
+            
+            // Mostrar mensaje de éxito
+            
+            // Restablecer el formulario después de la venta
+            setProducto('');
+            setCantidad('');
+            setPrecioUnitario('');
+            setCliente('');
+            setEmpleado('');
+            setMedioPago('');
+            setIdBanco('');
+    
         } catch (error) {
             console.error('Error registrando la venta:', error);
         }
     };
 
+
     return (
         <div className="registro-ventas-container">
             <h2>Registrar Venta</h2>
+            {mensajeExito && <p className="mensaje-exito">{mensajeExito}</p>} {/* Mostrar mensaje de éxito */}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Producto:</label>
@@ -97,11 +126,12 @@ function RegistroVentas() {
                     <input
                         type="number"
                         value={precioUnitario}
+                        onChange={(e) => setPrecioUnitario(e.target.value)}
                         readOnly
                     />
                 </div>
                 <div className="form-group">
-                    <label>Cliente:</label>
+                    <label>ID Cliente:</label>
                     <input
                         type="text"
                         value={cliente}
@@ -110,35 +140,52 @@ function RegistroVentas() {
                     />
                 </div>
                 <div className="form-group">
-                    <label>Nombre del Empleado:</label>
-                    <input
-                        type="text"
-                        value={nombreEmpleado}
-                        onChange={(e) => setNombreEmpleado(e.target.value)}
+                    <label>Empleado:</label>
+                    <select
+                        value={empleado}
+                        onChange={(e) => setEmpleado(e.target.value)}
                         required
-                    />
+                    >
+                        <option value="">Selecciona un empleado</option>
+                        {empleados.map(emp => (
+                            <option key={emp.IdEmpleado} value={emp.IdEmpleado}>
+                                {emp.NombreEmpleado}
+                            </option>
+                        ))}
+                    </select>
+                    {empleado && (
+                        <span className="empleado-id">ID Empleado: {empleado}</span>
+                    )}
                 </div>
                 <div className="form-group">
-                    <label>Fecha:</label>
-                    <input
-                        type="date"
-                        value={fecha}
-                        onChange={(e) => setFecha(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Medio de Pago:</label>
+                    <label>Método de Pago:</label>
                     <select
                         value={medioPago}
                         onChange={(e) => setMedioPago(e.target.value)}
                         required
                     >
+                        <option value="">Selecciona un método de pago</option>
                         <option value="Efectivo">Efectivo</option>
                         <option value="Tarjeta">Tarjeta</option>
-                        <option value="Transferencia">Transferencia</option>
                     </select>
                 </div>
+                {medioPago === 'Tarjeta' && (
+                    <div className="form-group">
+                        <label>Banco:</label>
+                        <select
+                            value={idBanco}
+                            onChange={(e) => setIdBanco(e.target.value)}
+                            required
+                        >
+                            <option value="">Selecciona un banco</option>
+                            {bancos.map(banco => (
+                                <option key={banco.IdBanco} value={banco.IdBanco}>
+                                    {banco.NombreBanco}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
                 <button type="submit" className="submit-button">Registrar Venta</button>
             </form>
         </div>
