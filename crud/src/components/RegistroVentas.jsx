@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import "../assets/styles/RegistroVentas.css";
 import axios from 'axios';
 
 function RegistroVentas() {
+    const apiUrl = import.meta.env.VITE_API_URL;
     const [producto, setProducto] = useState('');
     const [cantidad, setCantidad] = useState('');
     const [precioUnitario, setPrecioUnitario] = useState('');
@@ -10,7 +11,7 @@ function RegistroVentas() {
 
     // Obtener la lista de productos desde el backend al cargar el componente
     useEffect(() => {
-        axios.get('/api/productos/')
+        axios.get(`${apiUrl}/api/producto/`)
             .then(response => {
                 setProductos(response.data);
             })
@@ -48,8 +49,8 @@ function RegistroVentas() {
                     >
                         <option value="">Selecciona un producto</option>
                         {productos.map(prod => (
-                            <option key={prod.id} value={prod.id}>
-                                {prod.nombre}
+                            <option key={prod.IdProducto} value={prod.IdProducto}>
+                                {prod.NombreProducto}
                             </option>
                         ))}
                     </select>
