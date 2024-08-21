@@ -11,7 +11,7 @@ function Inicio() {
   return (
     <div className="contenedor-inicio">
       <h1>Bienvenido al SuperMercado XYZ</h1>
-      <div className="contenedor-cards">
+      <div className="contenedor-card">
         {
           cards.map((card, index) => (
             <Card key={index}
