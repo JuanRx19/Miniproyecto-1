@@ -88,13 +88,10 @@ class Factura(models.Model):
         db_table = 'factura'
 
 class ProductoFactura(models.Model):
+    IdProductoFactura = models.BigAutoField(primary_key=True)
     IdFactura = models.ForeignKey(Factura, on_delete=models.CASCADE, db_column='IdFactura')
     IdProducto = models.ForeignKey(Producto, on_delete=models.CASCADE, db_column='IdProducto')
     Cantidad = models.IntegerField()
 
     class Meta:
-        db_table = 'ProductoFactura'
-        unique_together = ('IdFactura', 'IdProducto')
-        constraints = [
-            models.UniqueConstraint(fields=['IdFactura', 'IdProducto'], name='unique_producto_factura')
-        ]
+        db_table = 'productofactura'
