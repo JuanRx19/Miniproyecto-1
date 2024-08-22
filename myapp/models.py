@@ -72,19 +72,24 @@ class Producto(models.Model):
         db_table = 'producto'
 
 class Factura(models.Model):
-    IdFactura = models.BigIntegerField(primary_key=True)
+    MEDIO_PAGO_CHOICES = [
+        ('Efectivo', 'Efectivo'),
+        ('Tarjeta', 'Tarjeta'),
+        ('Transferencia', 'Transferencia'),
+    ]
+    IdFactura = models.BigAutoField(primary_key=True)
     IdCliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, db_column='IdCliente')
     IdEmpleado = models.ForeignKey(Empleado, on_delete=models.CASCADE, db_column='IdEmpleado')
     Fecha = models.DateField()
-    MedioPago = models.CharField(max_length=50, choices=[('Efectivo', 'Efectivo'), ('Tarjeta', 'Tarjeta')])
+    MedioPago = models.CharField(max_length=50, choices=MEDIO_PAGO_CHOICES)
     IdBanco = models.ForeignKey(Banco, on_delete=models.CASCADE, db_column='IdBanco')
     #productos = models.ManyToManyField('Producto', through='ProductoFactura')
     class Meta:
         db_table = 'factura'
 
 class ProductoFactura(models.Model):
-    IdFactura = models.ForeignKey(Factura, on_delete=models.CASCADE)
-    IdProducto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    IdFactura = models.ForeignKey(Factura, on_delete=models.CASCADE, db_column='IdFactura')
+    IdProducto = models.ForeignKey(Producto, on_delete=models.CASCADE, db_column='IdProducto')
     Cantidad = models.IntegerField()
 
     class Meta:
