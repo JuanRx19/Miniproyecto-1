@@ -84,10 +84,15 @@ class FacturaRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Factura.objects.all()
     serializer_class = FacturaSerializer
     
+class ProductoFacturaListCreateView(generics.ListCreateAPIView):
+    queryset = ProductoFactura.objects.all()
+    serializer_class = ProductoFacturaSerializer
+
+
 class ProductoFacturaRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = ProductoFactura.objects.select_related('IdFactura', 'IdProducto')
     serializer_class = ProductoFacturaSerializer
     
-class ProductoFacturaListCreateView(generics.ListCreateAPIView):
+class ProductoFacturaListCreateViewRelacional(generics.ListCreateAPIView):
     queryset = ProductoFactura.objects.select_related('IdFactura', 'IdProducto')
     serializer_class = ProductoFacturaSerializerRelacional

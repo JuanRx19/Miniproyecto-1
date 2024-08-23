@@ -45,22 +45,22 @@ class FacturaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductoSerializerRelacional(serializers.ModelSerializer):
-    Proveedor = ProveedorSerializer()
+    IdProveedor = ProveedorSerializer()
     class Meta:
         model = Producto
         fields = '__all__'
         
 class FacturaSerializerRelacional(serializers.ModelSerializer):
-    Cliente = ClienteSerializer()
-    Empleado = EmpleadoSerializer()
-    Banco = BancoSerializer()
+    IdCliente = ClienteSerializer()
+    IdEmpleado = EmpleadoSerializer()
+    IdBanco = BancoSerializer()
     class Meta:
         model = Factura
         fields = '__all__'
 
 class ProductoFacturaSerializerRelacional(serializers.ModelSerializer):
-    Factura = FacturaSerializerRelacional()
-    Producto = ProductoSerializerRelacional()
+    IdFactura = FacturaSerializerRelacional()
+    IdProducto = ProductoSerializerRelacional()
     class Meta:
         model = ProductoFactura
         fields = '__all__'
