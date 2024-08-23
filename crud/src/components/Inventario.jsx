@@ -56,7 +56,11 @@ function Inventario() {
 
   function relacionProveedor(id){
     const nombre = proveedores.find((prov) => prov.IdProveedor === id);
-    return nombre.NombreProveedor;
+    if(!nombre){
+      return "Cargando..."
+    }else{
+      return nombre.NombreProveedor;
+    }
   } 
 
   return (

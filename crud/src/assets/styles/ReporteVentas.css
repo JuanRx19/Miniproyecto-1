@@ -1,0 +1,17 @@
+.contenedor-reporte-ventas{
+  margin: 20px;
+  width: 100%;
+  height: calc(100%-20px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contenedor-cabecero{
+  display: flex;
+  width: 100%;
+  background-color: aliceblue;
+  height: 10%;
+  border-radius: 10px;
+}
+

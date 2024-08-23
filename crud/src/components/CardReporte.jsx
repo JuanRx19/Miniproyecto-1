@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 function CardReporte(props) {
 
   return (
-    <div className="contenedor-card">
+    <div className="contenedor-card-reporte">
       <h2>{props.nombre}</h2>
       <img src={props.url} alt={props.nombre} />
     </div>

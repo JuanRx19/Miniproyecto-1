@@ -1,4 +1,5 @@
 import "../assets/styles/ReporteVentas.css"
+import CardReporte from "./CardReporte";
 import { useEffect, useState } from "react";
 import axios from 'axios';
 
@@ -20,7 +21,11 @@ function ReporteVentas() {
   };
   return (
     <div className="contenedor-reporte-ventas">
-      <h1></h1>
+      <h2>Ventas e ingresos</h2>
+      <div className="contenedor-cabecero">
+        
+      </div>
+      <CardReporte nombre="prueba"/>
       {
         asociacion.map(element => (
           <div className="element" key={element.IdProductoFactura}>
