@@ -2,7 +2,8 @@ from django.urls import path, include
 from .views import ItemListCreate, ItemRetrieveUpdateDestroy, home
 from .views import (
     BancoListCreateView, EmpleadoListCreateView, EmpleadoRetrieveUpdateDestroy, ClienteListCreateView, ClienteRetrieveUpdateDestroy,
-    ProveedorListCreateView, ProveedorRetrieveUpdateDestroy, ProductoListCreateView, ProductoRetrieveUpdateDestroy, FacturaListCreateView, ProductoFacturaListCreateView
+    ProveedorListCreateView, ProveedorRetrieveUpdateDestroy, ProductoListCreateView, ProductoRetrieveUpdateDestroy, FacturaListCreateView, ProductoFacturaListCreateView,
+    ProductoFacturaRetrieveUpdateDestroy
 )
 # Registro de Ventas
 from rest_framework.routers import DefaultRouter
@@ -26,8 +27,9 @@ urlpatterns = [
     path('producto/', ProductoListCreateView.as_view(), name='producto-list-create'),
     path('producto/<int:pk>/', ProductoRetrieveUpdateDestroy.as_view(), name='producto-detail'),
     path('factura/', FacturaListCreateView.as_view(), name='factura-list-create'),
-    path('productofactura/', ProductoFacturaListCreateView.as_view(), name='producto-factura-list-create'),
-    # Agregar la ruta para la lista de productos
+    path('productofactura/', ProductoFacturaRetrieveUpdateDestroy.as_view(), name='producto-factura-list-create'),
+    path('productofacturaconsulta/', ProductoFacturaListCreateView.as_view(), name='producto-factura-list-create-2'),
+    path('productofactura/<int:pk>/', ProductoFacturaRetrieveUpdateDestroy.as_view(), name='producto-factura-detail'),
     path('api/productos/', ProductoListCreateView.as_view(), name='producto-list-create'),
     path('api/', include(router.urls)),
 ]

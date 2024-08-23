@@ -33,7 +33,7 @@ def home(request):
 from .models import Banco, Empleado, Cliente, Proveedor, Producto, Factura, ProductoFactura
 from .serializers import (
     BancoSerializer, EmpleadoSerializer, ClienteSerializer,
-    ProveedorSerializer, ProductoSerializer, FacturaSerializer, ProductoFacturaSerializer
+    ProveedorSerializer, ProductoSerializer, FacturaSerializer, ProductoFacturaSerializer, ProductoFacturaSerializerRelacional
 )
 
 class BancoListCreateView(generics.ListCreateAPIView):
@@ -84,10 +84,10 @@ class FacturaRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Factura.objects.all()
     serializer_class = FacturaSerializer
     
-class ProductoFacturaListCreateView(generics.ListCreateAPIView):
-    queryset = ProductoFactura.objects.all()
+class ProductoFacturaRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ProductoFactura.objects.select_related('IdFactura', 'IdProducto')
     serializer_class = ProductoFacturaSerializer
     
-class ProductoFacturaRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ProductoFactura.objects.all()
-    serializer_class = FacturaSerializer
+class ProductoFacturaListCreateView(generics.ListCreateAPIView):
+    queryset = ProductoFactura.objects.select_related('IdFactura', 'IdProducto')
+    serializer_class = ProductoFacturaSerializerRelacional

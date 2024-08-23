@@ -96,6 +96,7 @@ function RegistroVentas() {
                 IdProducto: parseInt(producto),
                 Cantidad: cantidad
             }
+            console.log(ProductoFactura)
             await axios.post(`${apiUrl}/api/productofactura/`, ProductoFactura);
             
             await axios.patch(`${apiUrl}/api/producto/${producto}/`, {
