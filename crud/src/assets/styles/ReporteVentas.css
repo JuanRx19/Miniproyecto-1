@@ -10,8 +10,29 @@
 .contenedor-cabecero{
   display: flex;
   width: 100%;
-  background-color: aliceblue;
+  background-color: rgb(255, 255, 255);
   height: 10%;
   border-radius: 10px;
+  color: black;
+  justify-content: space-between;
+  align-items: center;
 }
 
+.contenedor-inicial{
+  margin-left: 40px;
+}
+
+.contenedor-final{
+  margin-right: 40px;
+}
+
+.info-text {
+  font-size: 16px;
+  color: #555;
+}
+
+.info-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
