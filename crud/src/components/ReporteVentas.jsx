@@ -41,7 +41,7 @@ function ReporteVentas() {
         </div>
         <div className="contenedor-final">
           <p className="info-text">Total</p>
-          <p className="info-value">{total}</p>
+          <p className="info-value">${total}</p>
         </div>
       </div>
         <div className="flex-container">
