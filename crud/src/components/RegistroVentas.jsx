@@ -14,9 +14,10 @@ function RegistroVentas() {
     const [idBanco, setIdBanco] = useState('');
     const [productos, setProductos] = useState([]);
     const [empleados, setEmpleados] = useState([]);
+    const [productosVenta, setProductosVenta] = useState([]); // Almacena los productos seleccionados
     const [mensajeExito, setMensajeExito] = useState('');
 
-    // Definir los bancos directamente en el componente
+    // Bancos predefinidos
     const bancos = [
         { IdBanco: 1, NombreBanco: 'Bancolombia' },
         { IdBanco: 2, NombreBanco: 'Banco de Bogotá' },
@@ -24,7 +25,6 @@ function RegistroVentas() {
         { IdBanco: 4, NombreBanco: 'Otro' }
     ];
 
-    // Obtener la fecha actual
     const fechaActual = new Date().toISOString().slice(0, 10);
 
     useEffect(() => {
@@ -55,14 +55,26 @@ function RegistroVentas() {
         }
     };
 
+    const agregarProducto = () => {
+        if (producto && cantidad && precioUnitario) {
+            const nuevoProducto = {
+                IdProducto: producto,
+                Cantidad: cantidad,
+                PrecioUnitario: precioUnitario
+            };
+            setProductosVenta([...productosVenta, nuevoProducto]);
+            setProducto('');
+            setCantidad('');
+            setPrecioUnitario('');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        alert("Generado con éxito");
+        alert("Factura generada con éxito");
 
         const venta = {
-            IdProducto: producto,
-            Cantidad: cantidad,
-            PrecioUnitario: precioUnitario,
+            Productos: productosVenta, // Lista de productos
             IdCliente: cliente,
             IdEmpleado: empleado,
             Fecha: fechaActual,
@@ -73,30 +85,26 @@ function RegistroVentas() {
         try {
             const response = await axios.post(`${apiUrl}/api/ventas/`, venta);
             console.log('Venta registrada:', response.data);
-            
+
             // Restablecer el formulario después de la venta
-            setProducto('');
-            setCantidad('');
-            setPrecioUnitario('');
             setCliente('');
             setEmpleado('');
             setMedioPago('');
             setIdBanco('');
+            setProductosVenta([]);
         } catch (error) {
             console.error('Error registrando la venta:', error);
         }
     };
 
-    // Calcular el total (cantidad * precio unitario)
-    const total = cantidad && precioUnitario ? (cantidad * precioUnitario) : 0;
+    const total = productosVenta.reduce((acc, prod) => acc + (prod.Cantidad * prod.PrecioUnitario), 0);
 
     return (
         <div className="registro-ventas-container">
             <h2>Registrar Venta</h2>
-            
-            {/* Mostrar la fecha actual */}
+
             <p>Fecha Actual: {fechaActual}</p>
-            
+
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Producto:</label>
@@ -131,6 +139,19 @@ function RegistroVentas() {
                         readOnly
                     />
                 </div>
+                <button type="button" onClick={agregarProducto} className="add-product-button">
+                    Agregar Producto
+                </button>
+
+                <h3>Productos en la factura:</h3>
+                <ul>
+                    {productosVenta.map((prod, index) => (
+                        <li key={index}>
+                            Producto: {prod.IdProducto}, Cantidad: {prod.Cantidad}, Precio Unitario: {prod.PrecioUnitario}
+                        </li>
+                    ))}
+                </ul>
+
                 <div className="form-group">
                     <label>ID Cliente:</label>
                     <input
@@ -188,9 +209,8 @@ function RegistroVentas() {
                     </div>
                 )}
 
-                {/* Mostrar el total calculado */}
                 <p>Total: {total}</p>
-                
+
                 <button type="submit" className="submit-button">Registrar Venta</button>
             </form>
         </div>

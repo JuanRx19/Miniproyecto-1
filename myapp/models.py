@@ -5,19 +5,28 @@ from django.db import models
 
 "REGISTRO DE VENTAS"
 
-from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Venta(models.Model):
-    producto = models.ForeignKey('Producto', on_delete=models.CASCADE)
-    cantidad = models.IntegerField()
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-    total_venta = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha_venta = models.DateTimeField(auto_now_add=True)
-    vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
+    IdFactura = models.CharField(max_length=20, unique=True, editable=False, null=True, blank=True)
+    IdProducto = models.ForeignKey('Producto', on_delete=models.CASCADE)
+    Cantidad = models.IntegerField()
+    PrecioUnitario = models.DecimalField(max_digits=10, decimal_places=2)
+    IdCliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
+    IdEmpleado = models.ForeignKey('Empleado', on_delete=models.CASCADE)
+    Fecha = models.DateField(auto_now_add=True)
+    MedioPago = models.CharField(max_length=50)
+    IdBanco = models.ForeignKey('Banco', on_delete=models.CASCADE)
+    TotalVenta = models.DecimalField(max_digits=15, decimal_places=2, editable=False, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.total_venta = self.cantidad * self.precio_unitario
+        if not self.IdFactura:
+            self.IdFactura = f"FAC-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+        self.TotalVenta = self.Cantidad * self.PrecioUnitario
         super(Venta, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Venta {self.id} - {self.Fecha}"
 
 "FINAL"
 
