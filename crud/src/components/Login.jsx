@@ -1,8 +1,25 @@
-import "../assets/styles/Login.css"
+import "../assets/styles/Login.css";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Navigate } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import ReCAPTCHA from "react-google-recaptcha";
+
+function MyComponent({ setCaptchaToken }) {
+  const onChange = (value) => {
+    console.log("Captcha value:", value);
+    setCaptchaToken(value); // Almacena el valor del captcha en el estado del componente padre
+  };
+
+  return (
+    <div>
+      <ReCAPTCHA
+        sitekey="6LeZjUkqAAAAAAzw1frG8WHq86JRA5s9YslHP9C7"
+        onChange={onChange}
+      />
+    </div>
+  );
+}
 
 function Login() {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -11,6 +28,7 @@ function Login() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggin, setLogin] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null); // Estado para almacenar el token de captcha
   const userRole = sessionStorage.getItem('userRole');
 
   useEffect(() => {
@@ -32,29 +50,34 @@ function Login() {
     }
   };
 
-  function verificar(){
-    try{
+  function verificar() {
+    if (!captchaToken) {
+      alert("Por favor completa el reCAPTCHA antes de iniciar sesión.");
+      return; // Si el captcha no está completado, no permite continuar
+    }
+
+    try {
       const userquery = users.find(use => use.Usuario === user);
-      if(userquery.Contraseña === password){
-        console.log("Correcto", userquery)
-        setLogin(true)
+      if (userquery.Contraseña === password) {
+        console.log("Correcto", userquery);
+        setLogin(true);
         sessionStorage.setItem('userNombre', userquery.NombreEmpleado);
         sessionStorage.setItem('userRole', userquery.TipoEmpleado);
-        alert("Inicio de sesión correcto")
-        //navigate('/home');
-      }else{
+        alert("Inicio de sesión correcto");
+      } else {
         sessionStorage.setItem('userNombre', null);
         sessionStorage.setItem('userRole', null);
-        alert("Usuario y/o contraseña incorrectos")
-        console.log("Incorrecto")
+        alert("Usuario y/o contraseña incorrectos");
+        console.log("Incorrecto");
       }
-    } catch (error){
+    } catch (error) {
       sessionStorage.setItem('userNombre', null);
       sessionStorage.setItem('userRole', null);
-      console.error("Usuario no existente")
-      alert("Usuario y/o contraseña incorrectos")
+      console.error("Usuario no existente");
+      alert("Usuario y/o contraseña incorrectos");
     }
-    setPassword("")
+
+    setPassword("");
   }
 
   const handleKeyDown = (event) => {
@@ -71,9 +94,12 @@ function Login() {
           <Navigate to="/Home" replace={true} />
         )}
         <h3>Usuario</h3>
-        <input value={user} onChange={(e) => setUser(e.target.value)} type="text" className="datos" placeholder="Usuario" onKeyDown={handleKeyDown}/>
+        <input value={user} onChange={(e) => setUser(e.target.value)} type="text" className="datos" placeholder="Usuario" onKeyDown={handleKeyDown} />
         <h3>Contraseña</h3>
-        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className="datos" placeholder="Contraseña" onKeyDown={handleKeyDown}/>
+        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className="datos" placeholder="Contraseña" onKeyDown={handleKeyDown} />
+        
+        <MyComponent setCaptchaToken={setCaptchaToken} />
+
         <button onClick={verificar} className="boton-login">Iniciar Sesión</button>
       </div>
     </div>

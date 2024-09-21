@@ -1,8 +1,9 @@
 from django.urls import path, include
 from .views import ItemListCreate, ItemRetrieveUpdateDestroy, home
 from .views import (
-    BancoListCreateView, EmpleadoListCreateView, EmpleadoRetrieveUpdateDestroy, ClienteListCreateView,
-    ProveedorListCreateView, ProveedorRetrieveUpdateDestroy, ProductoListCreateView, FacturaListCreateView, ProductoFacturaListCreateView
+    BancoListCreateView, EmpleadoListCreateView, EmpleadoRetrieveUpdateDestroy, ClienteListCreateView, ClienteRetrieveUpdateDestroy,
+    ProveedorListCreateView, ProveedorRetrieveUpdateDestroy, ProductoListCreateView, ProductoRetrieveUpdateDestroy, FacturaListCreateView, ProductoFacturaListCreateView,
+    ProductoFacturaListCreateViewRelacional
 )
 # Registro de Ventas
 from rest_framework.routers import DefaultRouter
@@ -20,12 +21,15 @@ urlpatterns = [
     path('empleado/', EmpleadoListCreateView.as_view(), name='empleado_retrieve_update_destroy'),
     path('empleado/<int:pk>/', EmpleadoRetrieveUpdateDestroy.as_view(), name='empleado-detail'),
     path('cliente/', ClienteListCreateView.as_view(), name='cliente-list-create'),
+    path('cliente/<int:pk>/', ClienteRetrieveUpdateDestroy.as_view(), name='cliente-detail'),
     path('proveedor/', ProveedorListCreateView.as_view(), name='proveedor-list-create'),
     path('proveedor/<int:pk>/', ProveedorRetrieveUpdateDestroy.as_view(), name='proveedor-detail'),
     path('producto/', ProductoListCreateView.as_view(), name='producto-list-create'),
+    path('producto/<int:pk>/', ProductoRetrieveUpdateDestroy.as_view(), name='producto-detail'),
     path('factura/', FacturaListCreateView.as_view(), name='factura-list-create'),
-    path('producto-factura/', ProductoFacturaListCreateView.as_view(), name='producto-factura-list-create'),
-    # Agregar la ruta para la lista de productos
+    path('productofactura/', ProductoFacturaListCreateView.as_view(), name='producto-factura-list-create'),
+    path('productofacturaconsulta/', ProductoFacturaListCreateViewRelacional.as_view(), name='producto-factura-list-create-2'),
+    #path('productofactura/<int:pk>/', ProductoFacturaRetrieveUpdateDestroy.as_view(), name='producto-factura-detail'),
     path('api/productos/', ProductoListCreateView.as_view(), name='producto-list-create'),
     path('api/', include(router.urls)),
 ]

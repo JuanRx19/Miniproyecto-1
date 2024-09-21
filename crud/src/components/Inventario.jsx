@@ -56,7 +56,11 @@ function Inventario() {
 
   function relacionProveedor(id){
     const nombre = proveedores.find((prov) => prov.IdProveedor === id);
-    return nombre.NombreProveedor;
+    if(!nombre){
+      return "Cargando..."
+    }else{
+      return nombre.NombreProveedor;
+    }
   } 
 
   return (
@@ -75,11 +79,13 @@ function Inventario() {
         {
           productos.map(producto => (
             <CardProducto key={producto.IdProducto}
+              id = {producto.IdProducto}
               nombre = {producto.NombreProducto}
               url = {producto.UrlImagen}
               cantidad = {producto.Cantidad}
               precio = {producto.ValorUnidad}
               proveedor = {relacionProveedor(producto.IdProveedor)}
+              fetchProducto = {fetchProductos}
             />
           ))
         }

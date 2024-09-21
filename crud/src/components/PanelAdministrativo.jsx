@@ -5,6 +5,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import React from 'react';
 
 function PanelAdministrativo() {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -63,7 +64,7 @@ function PanelAdministrativo() {
         <div className="grid-header">Tipo</div>
         <div className="grid-header"></div>
         {empleados.map(empleado => (
-          <>
+          <React.Fragment key={empleado.IdEmpleado}>
             <div className="grid-item" key={empleado.IdEmpleado}>{empleado.IdEmpleado}</div>
             <div className="grid-item">{empleado.NombreEmpleado}</div>
             <div className="grid-item">{empleado.Usuario}</div>
@@ -72,7 +73,7 @@ function PanelAdministrativo() {
               <button onClick={() => eliminarEmpleado(empleado.IdEmpleado)}><FontAwesomeIcon icon={faTrashAlt} /></button>
               <button onClick={() => editar(empleado)} className="editar"><FontAwesomeIcon icon={faPen} /></button>
             </div>
-          </>
+          </React.Fragment>
         ))}
       </div>
       <button onClick={() => agregar()}>Agregar empleado</button>

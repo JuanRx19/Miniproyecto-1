@@ -14,9 +14,6 @@ class VentaSerializer(serializers.ModelSerializer):
 
 "FINAL"
 
-
-
-
 class BancoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Banco
@@ -45,6 +42,27 @@ class ProductoSerializer(serializers.ModelSerializer):
 class FacturaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Factura
+        fields = '__all__'
+
+class ProductoSerializerRelacional(serializers.ModelSerializer):
+    IdProveedor = ProveedorSerializer()
+    class Meta:
+        model = Producto
+        fields = '__all__'
+        
+class FacturaSerializerRelacional(serializers.ModelSerializer):
+    IdCliente = ClienteSerializer()
+    IdEmpleado = EmpleadoSerializer()
+    IdBanco = BancoSerializer()
+    class Meta:
+        model = Factura
+        fields = '__all__'
+
+class ProductoFacturaSerializerRelacional(serializers.ModelSerializer):
+    IdFactura = FacturaSerializerRelacional()
+    IdProducto = ProductoSerializerRelacional()
+    class Meta:
+        model = ProductoFactura
         fields = '__all__'
 
 class ProductoFacturaSerializer(serializers.ModelSerializer):

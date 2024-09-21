@@ -7,6 +7,7 @@ function RegistroVentas() {
 
     const [producto, setProducto] = useState('');
     const [cantidad, setCantidad] = useState('');
+    const [maximo, setMaximo] = useState();
     const [precioUnitario, setPrecioUnitario] = useState('');
     const [cliente, setCliente] = useState('');
     const [empleado, setEmpleado] = useState('');
@@ -14,16 +15,10 @@ function RegistroVentas() {
     const [idBanco, setIdBanco] = useState('');
     const [productos, setProductos] = useState([]);
     const [empleados, setEmpleados] = useState([]);
-    const [productosVenta, setProductosVenta] = useState([]); // Almacena los productos seleccionados
-    const [mensajeExito, setMensajeExito] = useState('');
-
-    // Bancos predefinidos
-    const bancos = [
-        { IdBanco: 1, NombreBanco: 'Bancolombia' },
-        { IdBanco: 2, NombreBanco: 'Banco de Bogotá' },
-        { IdBanco: 3, NombreBanco: 'BBVA' },
-        { IdBanco: 4, NombreBanco: 'Otro' }
-    ];
+    const [bancos, setBancos] = useState([]);
+    const [clienteData, setClienteData] = useState(0);
+    const [nombre, setNombre] = useState('');
+    const [direccion, setDireccion] = useState('');
 
     const fechaActual = new Date().toISOString().slice(0, 10);
 
@@ -43,6 +38,14 @@ function RegistroVentas() {
             .catch(error => {
                 console.error('Error obteniendo los empleados:', error);
             });
+
+        axios.get(`${apiUrl}/api/banco/`)
+            .then(response => {
+                setBancos(response.data);
+            })
+            .catch(error => {
+                console.error('Error obteniendo los bancos:', error);
+            });
     }, []);
 
     const handleProductoChange = (e) => {
@@ -50,6 +53,7 @@ function RegistroVentas() {
         setProducto(e.target.value);
         if (productoSeleccionado) {
             setPrecioUnitario(productoSeleccionado.ValorUnidad);
+            setMaximo(productoSeleccionado.Cantidad)
         } else {
             setPrecioUnitario('');
         }
@@ -71,19 +75,50 @@ function RegistroVentas() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        alert("Factura generada con éxito");
-
-        const venta = {
-            Productos: productosVenta, // Lista de productos
-            IdCliente: cliente,
-            IdEmpleado: empleado,
-            Fecha: fechaActual,
-            MedioPago: medioPago,
-            IdBanco: medioPago === 'Tarjeta' ? idBanco : null
-        };
+        alert("Generado con éxito");
 
         try {
-            const response = await axios.post(`${apiUrl}/api/ventas/`, venta);
+            const nuevoCliente = {
+                IdCliente: cliente,
+                NombreCliente: nombre,
+                DireccionCliente: direccion
+            };
+
+            const venta = {
+                //IdProducto: producto,
+                //Cantidad: cantidad,
+                //PrecioUnitario: precioUnitario,
+                IdCliente: cliente,
+                IdEmpleado: empleado,
+                Fecha: fechaActual,
+                MedioPago: medioPago,
+                IdBanco: medioPago === 'Tarjeta' || medioPago === 'Transferencia' ? idBanco : 4
+            };
+
+            if(!clienteData.NombreCliente){
+                
+                await axios.post(`${apiUrl}/api/cliente/`, nuevoCliente)
+                console.log("Cliente creado correctamente")
+            }
+
+
+            const response = await axios.post(`${apiUrl}/api/factura/`, venta);
+
+            const ProductoFactura = {
+                IdFactura: response.data.IdFactura,
+                IdProducto: parseInt(producto),
+                Cantidad: cantidad
+            }
+            console.log(ProductoFactura)
+            await axios.post(`${apiUrl}/api/productofactura/`, ProductoFactura);
+            
+            await axios.patch(`${apiUrl}/api/producto/${producto}/`, {
+                Cantidad: maximo-cantidad
+              },{
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              });
             console.log('Venta registrada:', response.data);
 
             // Restablecer el formulario después de la venta
@@ -91,20 +126,123 @@ function RegistroVentas() {
             setEmpleado('');
             setMedioPago('');
             setIdBanco('');
-            setProductosVenta([]);
+            setMaximo();
+            setClienteData(0);
         } catch (error) {
             console.error('Error registrando la venta:', error);
         }
     };
 
-    const total = productosVenta.reduce((acc, prod) => acc + (prod.Cantidad * prod.PrecioUnitario), 0);
+    const buscarCliente = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.get(`${apiUrl}/api/cliente/${cliente}/`);
+            setClienteData(response.data)
+        } catch (error) {
+            setClienteData([])
+            console.error('Cliente no encontrado:', error);
+        }
+
+    };
+
+    function renderizarFormulario(){
+        if(clienteData !== 0){
+        return(
+            <>
+            {
+                clienteData.NombreCliente ? 
+                <>
+                    <h3>{clienteData.NombreCliente}</h3>
+                </>
+                :
+                <>
+                    <div className="form-group">
+                        <h3>Cliente no encontrado</h3>
+                        <label>Nombre del cliente:</label>
+                        <input
+                            type="text"
+                            value={nombre}
+                            onChange={(e) => setNombre(e.target.value)}
+                            required
+                        />
+                        <label>Dirección del cliente:</label>
+                        <input
+                            type="text"
+                            value={direccion}
+                            onChange={(e) => setDireccion(e.target.value)}
+                            required
+                        />
+                    </div>
+                </>
+            }
+            <div className="form-group">
+                <label>Empleado:</label>
+                <select
+                    value={empleado}
+                    onChange={(e) => setEmpleado(e.target.value)}
+                    required
+                >
+                    <option value="">Selecciona un empleado</option>
+                    {empleados.map(emp => (
+                        <option key={emp.IdEmpleado} value={emp.IdEmpleado}>
+                            {emp.NombreEmpleado}
+                        </option>
+                    ))}
+                </select>
+                {empleado && (
+                    <span className="empleado-id">ID Empleado: {empleado}</span>
+                )}
+            </div>
+            <div className="form-group">
+                <label>Método de Pago:</label>
+                <select
+                    value={medioPago}
+                    onChange={(e) => setMedioPago(e.target.value)}
+                    required
+                >   
+                    <option value="">Selecciona un método de pago</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+            </div>
+            {(medioPago === 'Tarjeta' || medioPago == 'Transferencia') && (
+                <div className="form-group">
+                    <label>Banco:</label>
+                    <select
+                        value={idBanco}
+                        onChange={(e) => setIdBanco(e.target.value)}
+                        required
+                    >
+                        <option value="">Selecciona un banco</option>
+                        {bancos.map(banco => (
+                            <option key={banco.IdBanco} value={banco.IdBanco}>
+                                {banco.NombreBanco}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+
+            {/* Mostrar el total calculado */}
+            <p>Total: {total}</p>
+            
+            <button type="submit" className="submit-button">Registrar Venta</button>
+        </>
+        );
+    }
+    }
+
+    // Calcular el total (cantidad * precio unitario)
+    const total = cantidad && precioUnitario ? (cantidad * precioUnitario) : 0;
 
     return (
         <div className="registro-ventas-container">
             <h2>Registrar Venta</h2>
-
+            
+            {/* Mostrar la fecha actual */}
             <p>Fecha Actual: {fechaActual}</p>
-
+            
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Producto:</label>
@@ -114,9 +252,11 @@ function RegistroVentas() {
                         required
                     >
                         <option value="">Selecciona un producto</option>
-                        {productos.map(prod => (
+                        {productos
+                        .filter(prod => prod.Cantidad > 0) // Filtrar productos con cantidad mayor a 0
+                        .map(prod => (
                             <option key={prod.IdProducto} value={prod.IdProducto}>
-                                {prod.NombreProducto}
+                            {prod.NombreProducto}
                             </option>
                         ))}
                     </select>
@@ -126,7 +266,16 @@ function RegistroVentas() {
                     <input
                         type="number"
                         value={cantidad}
-                        onChange={(e) => setCantidad(e.target.value)}
+                        onChange={(e) => {
+                            const valor = parseInt(e.target.value, 10);
+                            if (valor >= 1 && valor <= maximo) {
+                                setCantidad(valor);
+                            } else if (valor < 1) {
+                                setCantidad(1);
+                            } else if (valor > maximo) {
+                                setCantidad(maximo);
+                            }
+                        }}
                         required
                     />
                 </div>
@@ -139,21 +288,8 @@ function RegistroVentas() {
                         readOnly
                     />
                 </div>
-                <button type="button" onClick={agregarProducto} className="add-product-button">
-                    Agregar Producto
-                </button>
-
-                <h3>Productos en la factura:</h3>
-                <ul>
-                    {productosVenta.map((prod, index) => (
-                        <li key={index}>
-                            Producto: {prod.IdProducto}, Cantidad: {prod.Cantidad}, Precio Unitario: {prod.PrecioUnitario}
-                        </li>
-                    ))}
-                </ul>
-
                 <div className="form-group">
-                    <label>ID Cliente:</label>
+                    <label>Cedula del cliente:</label>
                     <input
                         type="text"
                         value={cliente}
@@ -161,57 +297,8 @@ function RegistroVentas() {
                         required
                     />
                 </div>
-                <div className="form-group">
-                    <label>Empleado:</label>
-                    <select
-                        value={empleado}
-                        onChange={(e) => setEmpleado(e.target.value)}
-                        required
-                    >
-                        <option value="">Selecciona un empleado</option>
-                        {empleados.map(emp => (
-                            <option key={emp.IdEmpleado} value={emp.IdEmpleado}>
-                                {emp.NombreEmpleado}
-                            </option>
-                        ))}
-                    </select>
-                    {empleado && (
-                        <span className="empleado-id">ID Empleado: {empleado}</span>
-                    )}
-                </div>
-                <div className="form-group">
-                    <label>Método de Pago:</label>
-                    <select
-                        value={medioPago}
-                        onChange={(e) => setMedioPago(e.target.value)}
-                        required
-                    >
-                        <option value="">Selecciona un método de pago</option>
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Tarjeta">Tarjeta</option>
-                    </select>
-                </div>
-                {medioPago === 'Tarjeta' && (
-                    <div className="form-group">
-                        <label>Banco:</label>
-                        <select
-                            value={idBanco}
-                            onChange={(e) => setIdBanco(e.target.value)}
-                            required
-                        >
-                            <option value="">Selecciona un banco</option>
-                            {bancos.map(banco => (
-                                <option key={banco.IdBanco} value={banco.IdBanco}>
-                                    {banco.NombreBanco}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
-
-                <p>Total: {total}</p>
-
-                <button type="submit" className="submit-button">Registrar Venta</button>
+                <button onClick={buscarCliente} className='boton-buscar'>Buscar cliente</button>
+                {renderizarFormulario()}
             </form>
         </div>
     );
