@@ -79,11 +79,13 @@ function Inventario() {
         {
           productos.map(producto => (
             <CardProducto key={producto.IdProducto}
+              id = {producto.IdProducto}
               nombre = {producto.NombreProducto}
               url = {producto.UrlImagen}
               cantidad = {producto.Cantidad}
               precio = {producto.ValorUnidad}
               proveedor = {relacionProveedor(producto.IdProveedor)}
+              fetchProducto = {fetchProductos}
             />
           ))
         }

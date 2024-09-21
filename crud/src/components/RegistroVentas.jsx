@@ -242,9 +242,11 @@ function RegistroVentas() {
                         required
                     >
                         <option value="">Selecciona un producto</option>
-                        {productos.map(prod => (
+                        {productos
+                        .filter(prod => prod.Cantidad > 0) // Filtrar productos con cantidad mayor a 0
+                        .map(prod => (
                             <option key={prod.IdProducto} value={prod.IdProducto}>
-                                {prod.NombreProducto}
+                            {prod.NombreProducto}
                             </option>
                         ))}
                     </select>

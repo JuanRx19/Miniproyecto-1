@@ -98,7 +98,6 @@ function Login() {
         <h3>Contraseña</h3>
         <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className="datos" placeholder="Contraseña" onKeyDown={handleKeyDown} />
         
-        {/* Incluye el componente del captcha y pasa la función setCaptchaToken */}
         <MyComponent setCaptchaToken={setCaptchaToken} />
 
         <button onClick={verificar} className="boton-login">Iniciar Sesión</button>
