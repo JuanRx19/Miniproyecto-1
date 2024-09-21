@@ -59,6 +59,7 @@ class Cliente(models.Model):
     IdCliente = models.BigIntegerField(primary_key=True)
     NombreCliente = models.CharField(max_length=50)
     DireccionCliente = models.CharField(max_length=50)
+    Correo = models.EmailField(max_length=254, null=True, blank=True)
     class Meta:
         db_table = 'cliente'
 
