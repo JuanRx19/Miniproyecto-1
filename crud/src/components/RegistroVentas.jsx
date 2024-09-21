@@ -5,6 +5,7 @@ import axios from 'axios';
 function RegistroVentas() {
     const apiUrl = import.meta.env.VITE_API_URL;
 
+    const [nombreProducto, setNombreProducto] = useState('')
     const [producto, setProducto] = useState('');
     const [cantidad, setCantidad] = useState('');
     const [maximo, setMaximo] = useState();
@@ -52,6 +53,7 @@ function RegistroVentas() {
         const productoSeleccionado = productos.find(prod => prod.IdProducto === parseInt(e.target.value));
         setProducto(e.target.value);
         if (productoSeleccionado) {
+            setNombreProducto(productoSeleccionado.NombreProducto)
             setPrecioUnitario(productoSeleccionado.ValorUnidad);
             setMaximo(productoSeleccionado.Cantidad)
         } else {
@@ -111,14 +113,23 @@ function RegistroVentas() {
             }
             console.log(ProductoFactura)
             await axios.post(`${apiUrl}/api/productofactura/`, ProductoFactura);
-            
+            const nuevaCantidad = maximo-cantidad
             await axios.patch(`${apiUrl}/api/producto/${producto}/`, {
-                Cantidad: maximo-cantidad
+                Cantidad: nuevaCantidad
               },{
                 headers: {
                   'Content-Type': 'application/json'
                 }
               });
+            
+            if(nuevaCantidad < 1){
+                await axios.post(`${apiUrl}/api/enviar-email/`, {
+                  destinatario: "juanrx1904@gmail.com",
+                  asunto: "Inventario agotado",
+                  email: `El producto ${nombreProducto} se ha agotado actualmente en el inventario.`,
+                });
+            }
+              
             console.log('Venta registrada:', response.data);
 
             // Restablecer el formulario después de la venta
@@ -128,6 +139,7 @@ function RegistroVentas() {
             setIdBanco('');
             setMaximo();
             setClienteData(0);
+            setNombreProducto('');
         } catch (error) {
             console.error('Error registrando la venta:', error);
         }

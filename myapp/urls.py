@@ -3,7 +3,7 @@ from .views import ItemListCreate, ItemRetrieveUpdateDestroy, home
 from .views import (
     BancoListCreateView, EmpleadoListCreateView, EmpleadoRetrieveUpdateDestroy, ClienteListCreateView, ClienteRetrieveUpdateDestroy,
     ProveedorListCreateView, ProveedorRetrieveUpdateDestroy, ProductoListCreateView, ProductoRetrieveUpdateDestroy, FacturaListCreateView, ProductoFacturaListCreateView,
-    ProductoFacturaListCreateViewRelacional
+    ProductoFacturaListCreateViewRelacional, EnviarCorreoAPIView
 )
 # Registro de Ventas
 from rest_framework.routers import DefaultRouter
@@ -32,4 +32,5 @@ urlpatterns = [
     #path('productofactura/<int:pk>/', ProductoFacturaRetrieveUpdateDestroy.as_view(), name='producto-factura-detail'),
     path('api/productos/', ProductoListCreateView.as_view(), name='producto-list-create'),
     path('api/', include(router.urls)),
+    path('enviar-email/', EnviarCorreoAPIView.as_view(), name='enviar-email'),
 ]
