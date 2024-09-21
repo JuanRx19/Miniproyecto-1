@@ -1,6 +1,10 @@
 from rest_framework import generics
 from .models import Item
 from .serializers import ItemSerializer
+from django.core.mail import send_mail
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 class ItemListCreate(generics.ListCreateAPIView):
     queryset = Item.objects.all()
@@ -96,3 +100,14 @@ class ProductoFacturaRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView
 class ProductoFacturaListCreateViewRelacional(generics.ListCreateAPIView):
     queryset = ProductoFactura.objects.select_related('IdFactura', 'IdProducto')
     serializer_class = ProductoFacturaSerializerRelacional
+    
+class EnviarCorreoAPIView(APIView):
+    def post(self, request):
+        asunto = request.data.get('asunto')
+        email = request.data.get('email')
+        destinatario = request.data.get('destinatario')
+        try:
+            send_mail(asunto, email, 'sistemaposxyz@gmail.com', [destinatario])
+            return Response({'message': 'Correo enviado exitosamente'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

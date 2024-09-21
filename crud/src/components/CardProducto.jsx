@@ -17,25 +17,33 @@ function CardProducto(props) {
           'Content-Type': 'application/json'
         }
       });
-      props.fetchProducto()
     } catch (error) {
       console.error('Error fetching proveedores:', error);
     }
+    props.fetchProducto()
   };
 
   const eliminarProducto = async () => {
+    const nuevaCantidad = parseInt(props.cantidad) - parseInt(cantidad)
     try {
       await axios.patch(`${apiUrl}/api/producto/${props.id}/`, {
-        Cantidad: parseInt(props.cantidad) - parseInt(cantidad)
+        Cantidad: nuevaCantidad
       },{
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      props.fetchProducto()
+      if(nuevaCantidad < 1){
+        await axios.post(`${apiUrl}/api/enviar-email/`, {
+          destinatario: "juanrx1904@gmail.com",
+          asunto: "Inventario agotado",
+          email: `El producto ${props.nombre} se ha agotado actualmente en el inventario.`,
+      });
+      }
     } catch (error) {
       console.error('Error fetching proveedores:', error);
     }
+    props.fetchProducto()
   };
   
   return (
