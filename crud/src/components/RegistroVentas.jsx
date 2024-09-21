@@ -309,6 +309,8 @@ function RegistroVentas() {
                     ))}
                 </ul>
 
+                <h4>Total de la factura: {productosVenta.reduce((acc, prod) => acc + prod.Total, 0)}</h4>
+
                 <div className="form-group">
                     <label>Cédula del cliente:</label>
                     <input
