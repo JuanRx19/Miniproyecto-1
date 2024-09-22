@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from myapp.views import home  # Asegúrate de que la vista `home` esté importada
+from backend.views import home  # Asegúrate de que la vista `home` esté importada
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('myapp.urls')),  # Ruta para la API
+    path('api/', include('backend.urls')),  # Ruta para la API
     path('', home, name='home'),          # Ruta raíz que muestra un mensaje de bienvenida
 ]

@@ -289,6 +289,7 @@ function RegistroVentas() {
 
     return (
         <div className="registro-ventas-container">
+            <Loader loading={loading} />
             <h2>Registrar Venta</h2>
             <p>Fecha Actual: {fechaActual}</p>
             

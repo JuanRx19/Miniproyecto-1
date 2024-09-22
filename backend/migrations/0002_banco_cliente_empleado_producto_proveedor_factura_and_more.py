@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('myapp', '0001_initial'),
+        ('backend', '0001_initial'),
     ]
 
     operations = [
@@ -74,9 +74,9 @@ class Migration(migrations.Migration):
                 ('IdFactura', models.BigIntegerField(primary_key=True, serialize=False)),
                 ('Fecha', models.DateField()),
                 ('MedioPago', models.CharField(choices=[('Efectivo', 'Efectivo'), ('Tarjeta', 'Tarjeta')], max_length=50)),
-                ('IdBanco', models.ForeignKey(db_column='IdBanco', on_delete=django.db.models.deletion.CASCADE, to='myapp.banco')),
-                ('IdCliente', models.ForeignKey(db_column='IdCliente', on_delete=django.db.models.deletion.CASCADE, to='myapp.cliente')),
-                ('IdEmpleado', models.ForeignKey(db_column='IdEmpleado', on_delete=django.db.models.deletion.CASCADE, to='myapp.empleado')),
+                ('IdBanco', models.ForeignKey(db_column='IdBanco', on_delete=django.db.models.deletion.CASCADE, to='backend.banco')),
+                ('IdCliente', models.ForeignKey(db_column='IdCliente', on_delete=django.db.models.deletion.CASCADE, to='backend.cliente')),
+                ('IdEmpleado', models.ForeignKey(db_column='IdEmpleado', on_delete=django.db.models.deletion.CASCADE, to='backend.empleado')),
             ],
             options={
                 'db_table': 'factura',
@@ -87,8 +87,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('Cantidad', models.IntegerField()),
-                ('IdFactura', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='myapp.factura')),
-                ('IdProducto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='myapp.producto')),
+                ('IdFactura', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='backend.factura')),
+                ('IdProducto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='backend.producto')),
             ],
             options={
                 'db_table': 'ProductoFactura',
@@ -97,17 +97,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='producto',
             name='facturas',
-            field=models.ManyToManyField(through='myapp.ProductoFactura', to='myapp.factura'),
+            field=models.ManyToManyField(through='backend.ProductoFactura', to='backend.factura'),
         ),
         migrations.AddField(
             model_name='factura',
             name='productos',
-            field=models.ManyToManyField(through='myapp.ProductoFactura', to='myapp.producto'),
+            field=models.ManyToManyField(through='backend.ProductoFactura', to='backend.producto'),
         ),
         migrations.AddField(
             model_name='producto',
             name='IdProveedor',
-            field=models.ForeignKey(db_column='IdProveedor', on_delete=django.db.models.deletion.CASCADE, to='myapp.proveedor'),
+            field=models.ForeignKey(db_column='IdProveedor', on_delete=django.db.models.deletion.CASCADE, to='backend.proveedor'),
         ),
         migrations.AddConstraint(
             model_name='productofactura',
