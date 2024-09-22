@@ -277,11 +277,15 @@ function RegistroVentas() {
                         value={cantidad}
                         onChange={(e) => {
                             const valor = parseInt(e.target.value, 10);
-                            if (valor >= 1 && valor <= maximo) {
+
+                            // Comprobamos que el valor no sea NaN y esté dentro del rango permitido
+                            if (!isNaN(valor) && valor >= 1 && valor <= maximo) {
                                 setCantidad(valor);
                             } else if (valor < 1) {
+                                // Si el valor es menor que 1, lo ajustamos a 1
                                 setCantidad(1);
                             } else if (valor > maximo) {
+                                // Si es mayor que el máximo, lo ajustamos al máximo
                                 setCantidad(maximo);
                             }
                         }}
