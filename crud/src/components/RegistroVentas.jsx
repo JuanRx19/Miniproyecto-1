@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import "../assets/styles/RegistroVentas.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
 function RegistroVentas() {
@@ -18,6 +20,7 @@ function RegistroVentas() {
     const [productosVenta, setProductosVenta] = useState([]); // Almacenar múltiples productos
     const [empleados, setEmpleados] = useState([]);
     const [bancos, setBancos] = useState([]);
+    const [correoElectronico, setCorreoElectronico] = useState('');
     const [clienteData, setClienteData] = useState(0);
     const [nombre, setNombre] = useState('');
     const [direccion, setDireccion] = useState('');
@@ -32,7 +35,7 @@ function RegistroVentas() {
             .catch(error => {
                 console.error('Error obteniendo los productos:', error);
             });
-
+    
         axios.get(`${apiUrl}/api/empleado/`)
             .then(response => {
                 setEmpleados(response.data);
@@ -40,7 +43,7 @@ function RegistroVentas() {
             .catch(error => {
                 console.error('Error obteniendo los empleados:', error);
             });
-
+    
         axios.get(`${apiUrl}/api/banco/`)
             .then(response => {
                 setBancos(response.data);
@@ -48,7 +51,8 @@ function RegistroVentas() {
             .catch(error => {
                 console.error('Error obteniendo los bancos:', error);
             });
-    }, []);
+    }, [apiUrl]);
+    
 
     const handleProductoChange = (e) => {
         const productoSeleccionado = productos.find(prod => prod.IdProducto === parseInt(e.target.value));
@@ -66,6 +70,7 @@ function RegistroVentas() {
         if (producto && cantidad && precioUnitario && cantidad <= maximo) {
             const nuevoProducto = {
                 IdProducto: producto,
+                Maximo: maximo,
                 NombreProducto: nombreProducto,
                 Cantidad: cantidad,
                 PrecioUnitario: precioUnitario,
@@ -89,14 +94,15 @@ function RegistroVentas() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         alert("Generado con éxito");
-
+    
         try {
             const nuevoCliente = {
                 IdCliente: cliente,
                 NombreCliente: nombre,
-                DireccionCliente: direccion
+                DireccionCliente: direccion,
+                Correo: correoElectronico
             };
-
+    
             const venta = {
                 IdCliente: cliente,
                 IdEmpleado: empleado,
@@ -104,24 +110,26 @@ function RegistroVentas() {
                 MedioPago: medioPago,
                 IdBanco: medioPago === 'Tarjeta' || medioPago === 'Transferencia' ? idBanco : 4
             };
-
+    
             if (!clienteData.NombreCliente) {
                 await axios.post(`${apiUrl}/api/cliente/`, nuevoCliente);
                 console.log("Cliente creado correctamente");
+            }else{
+                setCorreoElectronico(clienteData.Correo)
             }
-
+    
             const response = await axios.post(`${apiUrl}/api/factura/`, venta);
-
             for (const prodVenta of productosVenta) {
                 const productoFactura = {
                     IdFactura: response.data.IdFactura,
                     IdProducto: parseInt(prodVenta.IdProducto),
                     Cantidad: prodVenta.Cantidad
                 };
-                console.log(productoFactura);
+                //console.log(productoFactura);
                 await axios.post(`${apiUrl}/api/productofactura/`, productoFactura);
 
-                const nuevaCantidad = maximo - prodVenta.Cantidad;
+                const nuevaCantidad = prodVenta.Maximo - prodVenta.Cantidad;
+    
                 await axios.patch(`${apiUrl}/api/producto/${prodVenta.IdProducto}/`, {
                     Cantidad: nuevaCantidad
                 }, {
@@ -129,7 +137,7 @@ function RegistroVentas() {
                         'Content-Type': 'application/json'
                     }
                 });
-
+    
                 if (nuevaCantidad < 1) {
                     await axios.post(`${apiUrl}/api/enviar-email/`, {
                         destinatario: "juanrx1904@gmail.com",
@@ -139,8 +147,25 @@ function RegistroVentas() {
                 }
             }
 
-            console.log('Venta registrada:', response.data);
+            const productosAgotados = productosVenta
+                .map(prodVenta => `- ${prodVenta.NombreProducto}: Cantidad: ${prodVenta.Cantidad}, Precio Unitario: ${prodVenta.PrecioUnitario}, Total: ${prodVenta.Total}`)
+                .join('\n'); // Usamos join para juntar las líneas sin añadir una coma o espacio adicional.
 
+            const cuerpo = `Estimado cliente,\n\nSe ha registrado una nueva venta en nuestro sistema. A continuación, se detalla la información de los productos vendidos:\n\n${productosAgotados}\n\nGracias por su compra.\n\nSaludos cordiales,\nSuperMercado XYZ.`;
+
+            try {
+                await axios.post(`${apiUrl}/api/enviar-email/`, {
+                    destinatario: correoElectronico,
+                    asunto: "Factura de venta",
+                    email: cuerpo,
+                });
+            } catch (e) {
+                console.log(e);
+            }
+
+    
+            console.log('Venta registrada:', response.data);
+    
             // Restablecer el formulario después de la venta
             setCliente('');
             setEmpleado('');
@@ -154,6 +179,7 @@ function RegistroVentas() {
             console.error('Error registrando la venta:', error);
         }
     };
+    
 
     const buscarCliente = async (e) => {
         e.preventDefault();
@@ -189,6 +215,13 @@ function RegistroVentas() {
                                     onChange={(e) => setDireccion(e.target.value)}
                                     required
                                 />
+                                <label>Correo electronico:</label>
+                                <input
+                                    type="email"
+                                    value={correoElectronico}
+                                    onChange={(e) => setCorreoElectronico(e.target.value)}
+                                    required
+                                />
                             </div>
                         </>
                     }
@@ -206,9 +239,6 @@ function RegistroVentas() {
                                 </option>
                             ))}
                         </select>
-                        {empleado && (
-                            <span className="empleado-id">ID Empleado: {empleado}</span>
-                        )}
                     </div>
                     <div className="form-group">
                         <label>Método de Pago:</label>
@@ -260,7 +290,6 @@ function RegistroVentas() {
                     <select
                         value={producto}
                         onChange={handleProductoChange}
-                        required
                     >
                         <option value="">Selecciona un producto</option>
                         {productos.filter(prod => prod.Cantidad > 0).map(prod => (
@@ -278,12 +307,13 @@ function RegistroVentas() {
                         onChange={(e) => {
                             const valor = parseInt(e.target.value, 10);
 
-                            // Aceptar valores mayores a 0 sin bloquear
-                            if (!isNaN(valor)) {
-                                setCantidad(valor); 
+                            // Validar que la cantidad no exceda el máximo disponible y no sea negativa
+                            if (!isNaN(valor) && valor > 0 && valor <= maximo) {
+                                setCantidad(valor);
+                            } else if (valor > maximo) {
+                                alert(`La cantidad máxima disponible es ${maximo}`);
                             }
                         }}
-                        required
                     />
                 </div>
                 <div className="form-group">
@@ -295,14 +325,14 @@ function RegistroVentas() {
                         readOnly
                     />
                 </div>
-                <button type="button" onClick={agregarProducto}>Agregar Producto</button>
+                <button className="agregar-producto" type="button" onClick={agregarProducto}>Agregar Producto</button>
 
-                <h3>Productos en la factura:</h3>
-                <ul>
+                <h3>Productos seleccionados</h3>
+                <ul className='productos-ul'>
                     {productosVenta.map((prod, index) => (
                         <li key={index}>
-                            {prod.NombreProducto} - Cantidad: {prod.Cantidad} - Precio: {prod.PrecioUnitario} - Total: {prod.Total}
-                            <button type="button" onClick={() => eliminarProducto(index)}>Eliminar</button>
+                            x{prod.Cantidad} {prod.NombreProducto} - Precio: {prod.PrecioUnitario} - Total: {prod.Total}
+                            <button className type="button" onClick={() => eliminarProducto(index)}><FontAwesomeIcon icon={faTrashAlt} /></button>
                         </li>
                     ))}
                 </ul>

@@ -17,6 +17,50 @@
     background-color: #2C2F38;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-height: 100vh; /* Limitar la altura máxima al 90% de la vista */
+    overflow-y: auto; /* Agregar un scroll vertical cuando el contenido supera la altura máxima */
+}
+
+.productos-ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.productos-ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2C3E50; /* Fondo más oscuro */
+    color: #ECF0F1; /* Texto claro */
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.productos-ul li:nth-child(even) {
+    background-color: #34495E; /* Fondo alternativo */
+}
+
+.productos-ul li button {
+    background-color: #E74C3C; /* Fondo del botón */
+    color: #FFF; /* Color del icono */
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.productos-ul li button:hover {
+    background-color: #C0392B; /* Color del botón al pasar el cursor */
+}
+
+form .agregar-producto{
+    width: 20%;
+    background-color: #1a7339;
 }
 
 /* Quitar flechas de input number en navegadores basados en WebKit (Chrome, Safari, Edge) */
@@ -45,8 +89,9 @@ input[type=number] {
 
 /* Inputs de texto y número */
 .form-group input[type="text"],
-.form-group input[type="number"] {
-    width: 100%;
+.form-group input[type="number"],
+.form-group input[type="email"] {
+    width: 90%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
