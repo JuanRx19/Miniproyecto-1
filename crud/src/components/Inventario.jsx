@@ -3,6 +3,7 @@ import "../assets/styles/Inventario.css"
 import axios from 'axios';
 import CardProducto from "./CardProducto";
 import ModalPP from "./ModalPP";
+import Loader from './Loader';
 
 function Inventario() {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -10,6 +11,8 @@ function Inventario() {
   const [productos, setProductos] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isProducto, setEditProduct] = useState();
+  const [loading, setLoading] = useState(false);
+  
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
   const addProducto = () => setEditProduct(true);
@@ -38,19 +41,25 @@ function Inventario() {
 
   const fetchProveedores = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(`${apiUrl}/api/proveedor/`);
       setProveedores(response.data);
     } catch (error) {
       console.error('Error fetching proveedores:', error);
+    } finally {
+      setLoading(false)
     }
   };
 
   const fetchProductos = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(`${apiUrl}/api/producto/`);
       setProductos(response.data);
     } catch (error) {
       console.error('Error fetching productos:', error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -65,6 +74,7 @@ function Inventario() {
 
   return (
     <div className="contenedor-inventario">
+      <Loader loading={loading} />
       <div className="contenedor-informacion">
         <div className="informacion-tienda">
           <h3>Numero de proveedores: {proveedores.length}</h3>

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import "../assets/styles/RegistroVentas.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import Loader from './Loader';
 import axios from 'axios';
 
 function RegistroVentas() {
     const apiUrl = import.meta.env.VITE_API_URL;
 
+    const [loading, setLoading] = useState(false);
     const [nombreProducto, setNombreProducto] = useState('');
     const [producto, setProducto] = useState('');
     const [cantidad, setCantidad] = useState('');
@@ -28,6 +30,7 @@ function RegistroVentas() {
     const fechaActual = new Date().toISOString().slice(0, 10);
 
     useEffect(() => {
+        setLoading(true)
         axios.get(`${apiUrl}/api/producto/`)
             .then(response => {
                 setProductos(response.data);
@@ -51,6 +54,7 @@ function RegistroVentas() {
             .catch(error => {
                 console.error('Error obteniendo los bancos:', error);
             });
+        setLoading(false)
     }, [apiUrl]);
     
 
@@ -93,7 +97,7 @@ function RegistroVentas() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        alert("Generado con éxito");
+        setLoading(true);
     
         try {
             const nuevoCliente = {
@@ -154,11 +158,12 @@ function RegistroVentas() {
             const cuerpo = `Estimado cliente,\n\nSe ha registrado una nueva venta en nuestro sistema. A continuación, se detalla la información de los productos vendidos:\n\n${productosAgotados}\n\nGracias por su compra.\n\nSaludos cordiales,\nSuperMercado XYZ.`;
 
             try {
-                await axios.post(`${apiUrl}/api/enviar-email/`, {
+                const responseCorreo = await axios.post(`${apiUrl}/api/enviar-email/`, {
                     destinatario: correoElectronico,
                     asunto: "Factura de venta",
                     email: cuerpo,
                 });
+                console.log(responseCorreo)
             } catch (e) {
                 console.log(e);
             }
@@ -177,6 +182,8 @@ function RegistroVentas() {
             setProductosVenta([]); // Vaciar la lista de productos
         } catch (error) {
             console.error('Error registrando la venta:', error);
+        } finally {
+            setLoading(false); // Ocultar el indicador de carga
         }
     };
     
@@ -196,6 +203,7 @@ function RegistroVentas() {
         if (clienteData !== 0) {
             return (
                 <>
+                    <Loader loading={loading} />
                     {clienteData.NombreCliente ? 
                         <h3>{clienteData.NombreCliente}</h3> : 
                         <>

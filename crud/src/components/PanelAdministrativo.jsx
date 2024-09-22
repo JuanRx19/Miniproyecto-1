@@ -5,6 +5,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import Loader from './Loader';
 import React from 'react';
 
 function PanelAdministrativo() {
@@ -13,6 +14,7 @@ function PanelAdministrativo() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModal, setEditModal] = useState();
   const [dataTemp, setDataTemp] = useState();
+  const [loading, setLoading] = useState(false);
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
@@ -36,10 +38,13 @@ function PanelAdministrativo() {
   
   const fetchEmpleados = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(`${apiUrl}/api/empleado/`);
       setEmpleados(response.data);
     } catch (error) {
       console.error('Error fetching employees:', error);
+    } finally {
+      setLoading(false)
     }
   };
   
@@ -56,6 +61,7 @@ function PanelAdministrativo() {
 
   return (
     <div className="contenedor-administrativo">
+      <Loader loading={loading} />
       <h2>Lista de Empleados</h2>
       <div className="grid-container">
         <div className="grid-header">ID</div>

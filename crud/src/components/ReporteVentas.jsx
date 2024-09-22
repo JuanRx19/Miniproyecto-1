@@ -1,12 +1,13 @@
 import "../assets/styles/ReporteVentas.css"
-import CardReporte from "./CardReporte";
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import "../utils/logica"
+import Loader from './Loader';
 import { obtenerMaximo } from "../utils/logica";
 
 function ReporteVentas() {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [loading, setLoading] = useState(false);
   const [asociacion, setAsociacion] = useState([]);
   const [topProduct, setTopProduct] = useState("");
   const [total, setTotal] = useState(0);
@@ -17,6 +18,7 @@ function ReporteVentas() {
 
   const fetchProductoFactura = async () => {
     try {
+      setLoading(true)
       const response = await axios.get(`${apiUrl}/api/productofacturaconsulta/`);
       setAsociacion(response.data);
       const maximoVentas = obtenerMaximo(response.data)
@@ -24,11 +26,14 @@ function ReporteVentas() {
       setTotal(maximoVentas.valor)
     } catch (error) {
       console.error('Error fetching productofactura:', error);
+    } finally{
+      setLoading(false)
     }
   };
 
   return (
     <div className="contenedor-reporte-ventas">
+      <Loader loading={loading} />
       <h2>Ventas e ingresos</h2>
       <div className="contenedor-cabecero">
         <div className="contenedor-inicial">
