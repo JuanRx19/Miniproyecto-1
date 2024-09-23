@@ -22,7 +22,7 @@ function RegistroVentas() {
     const [productosVenta, setProductosVenta] = useState([]); // Almacenar múltiples productos
     const [empleados, setEmpleados] = useState([]);
     const [bancos, setBancos] = useState([]);
-    const [correoElectronico, setCorreoElectronico] = useState('');
+    const [correoElectronico, setCorreoElectronico] = useState("");
     const [clienteData, setClienteData] = useState(0);
     const [nombre, setNombre] = useState('');
     const [direccion, setDireccion] = useState('');
@@ -100,6 +100,7 @@ function RegistroVentas() {
         setLoading(true);
     
         try {
+            // Crear nuevo cliente si no existe
             const nuevoCliente = {
                 IdCliente: cliente,
                 NombreCliente: nombre,
@@ -115,59 +116,79 @@ function RegistroVentas() {
                 IdBanco: medioPago === 'Tarjeta' || medioPago === 'Transferencia' ? idBanco : 4
             };
     
+            // Verificar si el cliente existe
             if (!clienteData.NombreCliente) {
                 await axios.post(`${apiUrl}/api/cliente/`, nuevoCliente);
                 console.log("Cliente creado correctamente");
-            }else{
-                setCorreoElectronico(clienteData.Correo)
+            } else {
+                // Usar el correo electrónico existente
+                setCorreoElectronico(clienteData.Correo);
             }
     
+            // Registrar la venta
             const response = await axios.post(`${apiUrl}/api/factura/`, venta);
+    
+            // Iterar sobre productos y procesarlos
             for (const prodVenta of productosVenta) {
-                const productoFactura = {
-                    IdFactura: response.data.IdFactura,
-                    IdProducto: parseInt(prodVenta.IdProducto),
-                    Cantidad: prodVenta.Cantidad
-                };
-                //console.log(productoFactura);
-                await axios.post(`${apiUrl}/api/productofactura/`, productoFactura);
-
-                const nuevaCantidad = prodVenta.Maximo - prodVenta.Cantidad;
+                try {
+                    const productoFactura = {
+                        IdFactura: response.data.IdFactura,
+                        IdProducto: parseInt(prodVenta.IdProducto),
+                        Cantidad: prodVenta.Cantidad
+                    };
     
-                await axios.patch(`${apiUrl}/api/producto/${prodVenta.IdProducto}/`, {
-                    Cantidad: nuevaCantidad
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+                    // Registrar producto en la factura
+                    await axios.post(`${apiUrl}/api/productofactura/`, productoFactura);
     
-                if (nuevaCantidad < 1) {
-                    await axios.post(`${apiUrl}/api/enviar-email/`, {
-                        destinatario: "juanrx1904@gmail.com",
-                        asunto: "Inventario agotado",
-                        email: `El producto ${prodVenta.NombreProducto} se ha agotado actualmente en el inventario.`,
+                    const nuevaCantidad = prodVenta.Maximo - prodVenta.Cantidad;
+    
+                    // Actualizar cantidad de productos en inventario
+                    await axios.patch(`${apiUrl}/api/producto/${prodVenta.IdProducto}/`, {
+                        Cantidad: nuevaCantidad
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
                     });
+    
+                    // Enviar correo si el producto se ha agotado
+                    if (nuevaCantidad < 1) {
+                        try {
+                            await axios.post(`${apiUrl}/api/enviar-email/`, {
+                                destinatario: "juanrx1904@gmail.com",
+                                asunto: "Inventario agotado",
+                                email: `El producto ${prodVenta.NombreProducto} se ha agotado actualmente en el inventario.`,
+                            });
+                        } catch (error) {
+                            console.error(`Error enviando correo de agotado para el producto ${prodVenta.NombreProducto}:`, error);
+                            // Continuar incluso si falla el envío del correo de agotado
+                        }
+                    }
+    
+                } catch (error) {
+                    console.error(`Error procesando el producto ${prodVenta.NombreProducto}:`, error);
+                    // Continuar con el siguiente producto aunque haya un error
+                    continue;
                 }
             }
-
+    
+            // Crear cuerpo del correo con los productos vendidos
             const productosAgotados = productosVenta
                 .map(prodVenta => `- ${prodVenta.NombreProducto}: Cantidad: ${prodVenta.Cantidad}, Precio Unitario: ${prodVenta.PrecioUnitario}, Total: ${prodVenta.Total}`)
-                .join('\n'); // Usamos join para juntar las líneas sin añadir una coma o espacio adicional.
-
+                .join('\n');
+    
             const cuerpo = `Estimado cliente,\n\nSe ha registrado una nueva venta en nuestro sistema. A continuación, se detalla la información de los productos vendidos:\n\n${productosAgotados}\n\nGracias por su compra.\n\nSaludos cordiales,\nSuperMercado XYZ.`;
-
+            // Enviar correo de confirmación de venta al cliente
             try {
                 const responseCorreo = await axios.post(`${apiUrl}/api/enviar-email/`, {
-                    destinatario: correoElectronico,
+                    destinatario: clienteData.Correo,
                     asunto: "Factura de venta",
                     email: cuerpo,
                 });
-                console.log(responseCorreo)
+                console.log("Correo de factura enviado:", responseCorreo);
             } catch (e) {
-                console.log(e);
+                console.error("Error enviando el correo de factura:", e);
             }
-
     
             console.log('Venta registrada:', response.data);
     
@@ -176,17 +197,17 @@ function RegistroVentas() {
             setEmpleado('');
             setMedioPago('');
             setIdBanco('');
-            setMaximo();
+            setMaximo(null);
             setClienteData(0);
             setNombreProducto('');
             setProductosVenta([]); // Vaciar la lista de productos
+    
         } catch (error) {
             console.error('Error registrando la venta:', error);
         } finally {
             setLoading(false); // Ocultar el indicador de carga
         }
     };
-    
 
     const buscarCliente = async (e) => {
         e.preventDefault();
